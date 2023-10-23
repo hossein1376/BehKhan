@@ -1,6 +1,6 @@
 package repository
 
 type BookRepository interface {
-	GetByID(int) (*Book, error)
+	GetByID(...int64) ([]Book, error)
 	GetAll() ([]Book, error)
 }

@@ -4,8 +4,8 @@ import (
 	"log/slog"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/repository"
-	"github.com/hossein1376/BehKhan/catalogue/internal/transfer"
 	"github.com/hossein1376/BehKhan/catalogue/pkg/configs"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/transfer"
 )
 
 type handler struct {

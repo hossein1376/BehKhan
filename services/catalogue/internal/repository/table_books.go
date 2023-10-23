@@ -3,12 +3,12 @@ package repository
 import (
 	"gorm.io/gorm"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/transfer"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/transfer"
 )
 
 type Book struct {
-	gorm.Model
-	Name string
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
 }
 
 type BooksTable struct {
@@ -26,10 +26,10 @@ func (b *BooksTable) GetAll() ([]Book, error) {
 	return books, nil
 }
 
-func (b *BooksTable) GetByID(id int) (*Book, error) {
-	var book Book
+func (b *BooksTable) GetByID(id ...int64) ([]Book, error) {
+	var books []Book
 
-	res := b.db.Find(&book, id)
+	res := b.db.Find(&books, id)
 	if res.Error != nil {
 		return nil, transfer.InternalError{Err: res.Error}
 	}
@@ -38,5 +38,5 @@ func (b *BooksTable) GetByID(id int) (*Book, error) {
 		return nil, transfer.NotFoundError{}
 	}
 
-	return &book, nil
+	return books, nil
 }

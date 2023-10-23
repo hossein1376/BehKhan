@@ -7,20 +7,28 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/transfer"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/configs"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/transfer"
 	"github.com/hossein1376/BehKhan/catalogue/proto/cataloguePB"
 )
 
 type Server struct {
+	*configs.Application
 	cataloguePB.UnimplementedBookServiceServer
 }
 
-func (s Server) GetBook(_ context.Context, in *cataloguePB.BookRequest) (*cataloguePB.BookResponse, error) {
-	books := make([]*cataloguePB.Book, 0, len(in.GetId()))
+func (s Server) GetBook(_ context.Context, req *cataloguePB.BookRequest) (*cataloguePB.BookResponse, error) {
+	resp, err := s.Application.Repository.Book.GetByID(req.GetId()...)
+	if err != nil {
+		return nil, err
+	}
 
-	return &cataloguePB.BookResponse{
-		Books: books,
-	}, nil
+	books := make([]*cataloguePB.Book, 0, len(resp))
+	for _, book := range resp {
+		books = append(books, &cataloguePB.Book{Id: book.ID, Name: book.Name})
+	}
+
+	return &cataloguePB.BookResponse{Books: books}, nil
 }
 
 func (h *handler) getAllBooks(c *gin.Context) {
@@ -34,7 +42,7 @@ func (h *handler) getAllBooks(c *gin.Context) {
 }
 
 func (h *handler) getBookByID(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		h.NotFoundResponse(c, nil)
 		return
@@ -51,5 +59,5 @@ func (h *handler) getBookByID(c *gin.Context) {
 		return
 	}
 
-	h.StatusOKResponse(c, gin.H{"book": book})
+	h.StatusOKResponse(c, gin.H{"book": book[0]})
 }

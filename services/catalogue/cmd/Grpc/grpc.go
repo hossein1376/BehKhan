@@ -24,7 +24,7 @@ func ServeGrpc(app *configs.Application) {
 	}
 
 	s := grpc.NewServer()
-	cataloguePB.RegisterBookServiceServer(s, &handlers.Server{})
+	cataloguePB.RegisterBookServiceServer(s, &handlers.Server{Application: app})
 
 	app.Logger.Info(fmt.Sprintf("starting gRPC server on port %d", app.Settings.Grpc.Port))
 
