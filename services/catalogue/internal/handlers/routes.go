@@ -1,27 +1,10 @@
 package handlers
 
 import (
-	"log/slog"
-
 	"github.com/gin-gonic/gin"
-
-	"github.com/hossein1376/BehKhan/catalogue/internal/repository"
-	"github.com/hossein1376/BehKhan/catalogue/pkg/configs"
 )
 
-type Handler struct {
-	repository *repository.Models
-	logger     *slog.Logger
-}
-
-func NewHandler(app *configs.Application) Handler {
-	return Handler{
-		repository: app.Repository,
-		logger:     app.Logger,
-	}
-}
-
-func (h *Handler) Router() *gin.Engine {
+func (h *handler) Router() *gin.Engine {
 	r := gin.New()
 	gin.SetMode(gin.ReleaseMode)
 

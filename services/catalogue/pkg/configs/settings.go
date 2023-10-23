@@ -4,8 +4,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-func GetSettings() (*Settings, error) {
-	viper.SetConfigFile("./config/config.yaml")
+func GetSettings(path string) (*Settings, error) {
+	viper.SetConfigFile(path)
 	err := viper.ReadInConfig()
 	if err != nil {
 		return nil, err

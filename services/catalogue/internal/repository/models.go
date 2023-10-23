@@ -4,12 +4,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type Models struct {
+type Repository struct {
 	Book BookRepository
 }
 
-func NewModels(db *gorm.DB) *Models {
-	return &Models{
+func NewRepository(db *gorm.DB) *Repository {
+	return &Repository{
 		Book: &BooksTable{db: db},
 	}
 }

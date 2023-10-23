@@ -23,12 +23,14 @@ import (
 // @BasePath        /api/v1/catalogue
 func main() {
 	var debug bool
+	var cfg string
 	flag.BoolVar(&debug, "debug", false, "Debug level logs")
+	flag.StringVar(&cfg, "c", "./config/config.yaml", "Config file path")
 	flag.Parse()
 
 	logger := logging.NewLogger(os.Stdout, debug)
 
-	settings, err := configs.GetSettings()
+	settings, err := configs.GetSettings(cfg)
 	if err != nil {
 		logger.Error("failed to read the settings", "error", err)
 		return
@@ -43,7 +45,7 @@ func main() {
 	app := &configs.Application{
 		Settings:   settings,
 		Logger:     logger,
-		Repository: repository.NewModels(db),
+		Repository: repository.NewRepository(db),
 	}
 
 	go Grpc.ServeGrpc(app)

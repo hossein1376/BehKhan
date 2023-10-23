@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"context"
-	"net/http"
+	"errors"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/hossein1376/BehKhan/catalogue/internal/transfer"
 	"github.com/hossein1376/BehKhan/catalogue/proto/cataloguePB"
 )
 
@@ -21,14 +23,33 @@ func (s Server) GetBook(_ context.Context, in *cataloguePB.BookRequest) (*catalo
 	}, nil
 }
 
-func (h *Handler) getAllBooks(c *gin.Context) {
-	books := h.repository.Book.GetAll()
-	c.JSON(http.StatusOK, gin.H{
-		"books": books,
-	})
+func (h *handler) getAllBooks(c *gin.Context) {
+	books, err := h.Book.GetAll()
+	if err != nil {
+		h.InternalServerErrorResponse(c, err)
+		return
+	}
+
+	h.StatusCreatedResponse(c, gin.H{"books": books})
 }
 
-func (h *Handler) getBookByID(c *gin.Context) {
-	id := c.Param("id")
-	println(id)
+func (h *handler) getBookByID(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		h.NotFoundResponse(c, nil)
+		return
+	}
+
+	book, err := h.Book.GetByID(id)
+	if err != nil {
+		switch {
+		case errors.As(err, &transfer.NotFoundError{}):
+			h.NotFoundResponse(c, err)
+		default:
+			h.InternalServerErrorResponse(c, err)
+		}
+		return
+	}
+
+	h.StatusOKResponse(c, gin.H{"book": book})
 }

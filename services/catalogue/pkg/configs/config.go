@@ -9,7 +9,7 @@ import (
 type Application struct {
 	Settings   *Settings
 	Logger     *slog.Logger
-	Repository *repository.Models
+	Repository *repository.Repository
 }
 
 type Settings struct {
