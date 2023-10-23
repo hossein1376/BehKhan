@@ -18,8 +18,26 @@ jobs:
         with:
           go-version: '1.21'
 
-      - name: Test
-        run: go test -v ./...
+      - name: Test Entry
+        run: go test -C ./services/entry
 
-      - name: Build
-        run: go build -v ./...
+      - name: Build Entry
+        run: go build -C ./services/entry
+
+      - name: Test Catalogue
+        run: go test -C ./services/catalogue
+
+      - name: Build Catalogue
+        run: go build -C ./services/catalogue
+
+      - name: Test Review
+        run: go test -C ./services/review
+
+      - name: Build Review
+        run: go build -C ./services/review
+
+      - name: Test Auth
+        run: go test -C ./services/auth
+
+      - name: Build Auth
+        run: go build -C ./services/auth
