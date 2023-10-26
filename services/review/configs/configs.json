@@ -1,0 +1,16 @@
+{
+  "http": {
+    "port": "8004"
+  },
+  "grpc": {
+    "port": "8005"
+  },
+  "db": {
+    "name": "BehKhan",
+    "collection": "reviews",
+    "username": "root",
+    "password": "123456",
+    "host": "localhost",
+    "port": "27017"
+  }
+}
