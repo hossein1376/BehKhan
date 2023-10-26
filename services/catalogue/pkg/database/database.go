@@ -7,10 +7,10 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/repository"
-	"github.com/hossein1376/BehKhan/catalogue/pkg/configs"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/config"
 )
 
-func GetDB(settings *configs.Settings) (*gorm.DB, error) {
+func GetDB(settings *config.Settings) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
 		settings.DB.Username,

@@ -7,13 +7,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/hossein1376/BehKhan/catalogue/pkg/configs"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/config"
 	"github.com/hossein1376/BehKhan/catalogue/pkg/transfer"
 	"github.com/hossein1376/BehKhan/catalogue/proto/cataloguePB"
 )
 
 type Server struct {
-	*configs.Application
+	*config.Application
 	cataloguePB.UnimplementedBookServiceServer
 }
 

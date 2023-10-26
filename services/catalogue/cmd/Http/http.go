@@ -5,10 +5,10 @@ import (
 	"log"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/handlers"
-	"github.com/hossein1376/BehKhan/catalogue/pkg/configs"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/config"
 )
 
-func ServeHttp(app *configs.Application) {
+func ServeHttp(app *config.Application) {
 	h := handlers.NewHandler(app)
 	r := h.Router()
 

@@ -7,7 +7,7 @@ import (
 	"github.com/hossein1376/BehKhan/catalogue/cmd/Grpc"
 	"github.com/hossein1376/BehKhan/catalogue/cmd/Http"
 	"github.com/hossein1376/BehKhan/catalogue/internal/repository"
-	"github.com/hossein1376/BehKhan/catalogue/pkg/configs"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/config"
 	"github.com/hossein1376/BehKhan/catalogue/pkg/database"
 	"github.com/hossein1376/BehKhan/catalogue/pkg/logging"
 )
@@ -30,7 +30,7 @@ func main() {
 
 	logger := logging.NewLogger(os.Stdout, debug)
 
-	settings, err := configs.GetSettings(cfg)
+	settings, err := config.GetSettings(cfg)
 	if err != nil {
 		logger.Error("failed to read the settings", "error", err)
 		return
@@ -42,7 +42,7 @@ func main() {
 		return
 	}
 
-	app := &configs.Application{
+	app := &config.Application{
 		Settings:   settings,
 		Logger:     logger,
 		Repository: repository.NewRepository(db),
