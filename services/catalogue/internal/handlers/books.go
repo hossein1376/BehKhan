@@ -9,7 +9,7 @@ import (
 
 	"github.com/hossein1376/BehKhan/catalogue/pkg/config"
 	"github.com/hossein1376/BehKhan/catalogue/pkg/transfer"
-	"github.com/hossein1376/BehKhan/catalogue/proto/cataloguePB"
+	"github.com/hossein1376/BehKhan/proto/cataloguePB"
 )
 
 type Server struct {

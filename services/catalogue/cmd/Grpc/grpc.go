@@ -8,7 +8,7 @@ import (
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/handlers"
 	"github.com/hossein1376/BehKhan/catalogue/pkg/config"
-	"github.com/hossein1376/BehKhan/catalogue/proto/cataloguePB"
+	"github.com/hossein1376/BehKhan/proto/cataloguePB"
 )
 
 func ServeGrpc(app *config.Application) {
