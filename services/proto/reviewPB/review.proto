@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package review;
+option go_package = "./reviewPB";
+
+message Review {
+}
