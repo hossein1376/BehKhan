@@ -18,10 +18,19 @@
     "password": "123456",
     "host": "localhost",
     "port": "5672",
-    "queue_name": "review",
-    "durable": false,
-    "auto_delete": false,
-    "exclusive": false,
-    "no-wait": false
+    "publisher": {
+      "queue_name": "review",
+      "durable": false,
+      "auto_delete": false,
+      "exclusive": false,
+      "no-wait": false
+    },
+    "consumer": {
+      "queue_name": "catalogue",
+      "durable": false,
+      "auto_delete": false,
+      "exclusive": false,
+      "no-wait": false
+    }
   }
 }

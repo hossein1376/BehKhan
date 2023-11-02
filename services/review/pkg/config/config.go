@@ -16,16 +16,21 @@ type Application struct {
 }
 
 type Settings struct {
-	Http   http  `json:"http"`
-	Grpc   grpc  `json:"grpc"`
-	DB     db    `json:"db"`
-	Broker queue `json:"broker"`
+	Http   http          `json:"http"`
+	Grpc   grpc          `json:"grpc"`
+	DB     db            `json:"db"`
+	Broker messageBroker `json:"broker"`
 }
 
 type Broker struct {
 	Connection *amqp.Connection
-	Channel    *amqp.Channel
-	Queue      amqp.Queue
+	Publisher  *Rabbit
+	Consumer   *Rabbit
+}
+
+type Rabbit struct {
+	Channel *amqp.Channel
+	Queue   amqp.Queue
 }
 
 type http struct {
@@ -45,12 +50,17 @@ type db struct {
 	Port       string `json:"port"`
 }
 
+type messageBroker struct {
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Host      string `json:"host"`
+	Port      string `json:"port"`
+	Publisher queue  `json:"publisher"`
+	Consumer  queue  `json:"consumer"`
+}
+
 type queue struct {
-	Username   string `json:"username"`
-	Password   string `json:"password"`
-	Host       string `json:"host"`
-	Port       string `json:"port"`
-	QueueName  string `json:"queue_name"`
+	Name       string `json:"name"`
 	Durable    bool   `json:"durable"`
 	AutoDelete bool   `json:"auto_delete"`
 	Exclusive  bool   `json:"exclusive"`

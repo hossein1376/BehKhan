@@ -51,11 +51,17 @@ func main() {
 		}
 		logger.Debug("closed database connection")
 
-		if err = broker.Channel.Close(); err != nil {
-			logger.Error("failed to close message queue channel", "error", err)
+		if err = broker.Publisher.Channel.Close(); err != nil {
+			logger.Error("failed to close publisher message queue channel", "error", err)
 			return
 		}
-		logger.Debug("closed message queue channel")
+		logger.Debug("closed publisher message queue channel")
+
+		if err = broker.Consumer.Channel.Close(); err != nil {
+			logger.Error("failed to close consumer message queue channel", "error", err)
+			return
+		}
+		logger.Debug("closed consumer message queue channel")
 
 		if err = broker.Connection.Close(); err != nil {
 			logger.Error("failed to close message queue connection", "error", err)

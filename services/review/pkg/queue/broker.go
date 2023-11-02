@@ -26,17 +26,33 @@ func NewBroker(cfg *config.Settings) (*config.Broker, error) {
 		return nil, err
 	}
 
-	queue, err := ch.QueueDeclare(
-		cfg.Broker.QueueName,
-		cfg.Broker.Durable,
-		cfg.Broker.AutoDelete,
-		cfg.Broker.Exclusive,
-		cfg.Broker.NoWait,
+	publish, err := ch.QueueDeclare(
+		cfg.Broker.Publisher.Name,
+		cfg.Broker.Publisher.Durable,
+		cfg.Broker.Publisher.AutoDelete,
+		cfg.Broker.Publisher.Exclusive,
+		cfg.Broker.Publisher.NoWait,
 		nil,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	return &config.Broker{Channel: ch, Queue: queue}, nil
+	consumer, err := ch.QueueDeclare(
+		cfg.Broker.Consumer.Name,
+		cfg.Broker.Consumer.Durable,
+		cfg.Broker.Consumer.AutoDelete,
+		cfg.Broker.Consumer.Exclusive,
+		cfg.Broker.Consumer.NoWait,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &config.Broker{
+		Connection: conn,
+		Publisher:  &config.Rabbit{Channel: ch, Queue: publish},
+		Consumer:   &config.Rabbit{Channel: ch, Queue: consumer},
+	}, nil
 }
