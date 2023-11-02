@@ -18,6 +18,6 @@ func NewHandler(app *config.Application) *handler {
 	return &handler{
 		Logger:     app.Logger,
 		Repository: app.Repository,
-		Response:   transfer.NewResponse(app.Logger),
+		Response:   transfer.NewResponse(),
 	}
 }
