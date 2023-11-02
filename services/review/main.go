@@ -10,6 +10,7 @@ import (
 	"github.com/hossein1376/BehKhan/review/pkg/config"
 	"github.com/hossein1376/BehKhan/review/pkg/database"
 	"github.com/hossein1376/BehKhan/review/pkg/logging"
+	"github.com/hossein1376/BehKhan/review/pkg/queue"
 )
 
 func main() {
@@ -29,21 +30,42 @@ func main() {
 	}
 	logger.Debug("configs were loaded")
 
-	db, disconnect, err := database.OpenDB(settings)
+	db, disconnectDB, err := database.OpenDB(settings)
 	if err != nil {
 		logger.Error("failed to open database connection", "error", err)
 		return
 	}
+	logger.Debug("opened database connection")
+
+	broker, err := queue.NewBroker(settings)
+	if err != nil {
+		logger.Error("couldn't dial message queue server", "error", err)
+		return
+	}
+	logger.Debug("successfully dialed message queue server")
 
 	defer func() {
-		if err = disconnect(); err != nil {
+		if err = disconnectDB(); err != nil {
 			logger.Error("failed to close database connection", "error", err)
 			return
 		}
 		logger.Debug("closed database connection")
+
+		if err = broker.Channel.Close(); err != nil {
+			logger.Error("failed to close message queue channel", "error", err)
+			return
+		}
+		logger.Debug("closed message queue channel")
+
+		if err = broker.Connection.Close(); err != nil {
+			logger.Error("failed to close message queue connection", "error", err)
+			return
+		}
+		logger.Debug("closed message queue connection")
 	}()
 
 	app := &config.Application{
+		Broker:     broker,
 		Logger:     logger,
 		Settings:   settings,
 		Repository: repository.NewRepository(db),
