@@ -3,6 +3,7 @@ package Grpc
 import (
 	"fmt"
 	"net"
+	"syscall"
 
 	"google.golang.org/grpc"
 
@@ -10,6 +11,7 @@ import (
 )
 
 func ServeGrpc(app *config.Application) {
+	// catch panics, if any were to happen
 	defer func() {
 		if err := recover(); err != nil {
 			app.Logger.Error("failed to recover in grpc goroutine", "error", err)
@@ -24,9 +26,15 @@ func ServeGrpc(app *config.Application) {
 
 	s := grpc.NewServer()
 
+	// graceful shutdown
 	go func() {
 		<-app.Signals.ShutdownGRPC
+		app.Logger.Debug("GRPC graceful shutdown started")
+
 		s.GracefulStop()
+
+		app.Logger.Debug("GRPC graceful shutdown finished")
+		app.Signals.ShutdownGRPC <- syscall.Signal(0)
 	}()
 
 	app.Logger.Info(fmt.Sprintf("starting gRPC server on port %s", app.Settings.Grpc.Port))

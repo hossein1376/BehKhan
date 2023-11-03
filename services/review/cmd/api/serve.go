@@ -75,10 +75,17 @@ func serve() {
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	interrupt := <-quit
 
-	app.Logger.Info("shutting down server", "signal", interrupt.String())
-	app.Signals.ShutdownHTTP <- interrupt
+	// wait indefinitely until exit signal is sent
+	interrupt := <-quit
+	logger.Info("shutting down the server", "signal", interrupt.String())
+
+	// sending interrupt signal to goroutines
 	app.Signals.ShutdownGRPC <- interrupt
+	app.Signals.ShutdownHTTP <- interrupt
+
+	// waiting for each one's response
+	<-app.Signals.ShutdownGRPC
+	<-app.Signals.ShutdownHTTP
 	return
 }
