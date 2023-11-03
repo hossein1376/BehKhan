@@ -24,6 +24,11 @@ func ServeGrpc(app *config.Application) {
 
 	s := grpc.NewServer()
 
+	go func() {
+		<-app.Signals.ShutdownGRPC
+		s.GracefulStop()
+	}()
+
 	app.Logger.Info(fmt.Sprintf("starting gRPC server on port %s", app.Settings.Grpc.Port))
 	err = s.Serve(lis)
 	if err != nil {

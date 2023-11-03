@@ -3,17 +3,19 @@ package main
 import (
 	"flag"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/hossein1376/BehKhan/review/cmd/Grpc"
 	"github.com/hossein1376/BehKhan/review/cmd/Http"
 	"github.com/hossein1376/BehKhan/review/internal/repository"
+	"github.com/hossein1376/BehKhan/review/pkg/brokers"
 	"github.com/hossein1376/BehKhan/review/pkg/config"
 	"github.com/hossein1376/BehKhan/review/pkg/database"
 	"github.com/hossein1376/BehKhan/review/pkg/logging"
-	"github.com/hossein1376/BehKhan/review/pkg/queue"
 )
 
-func main() {
+func serve() {
 	var cfg string
 	var debug bool
 	flag.BoolVar(&debug, "debug", false, "Debug level logs")
@@ -37,12 +39,12 @@ func main() {
 	}
 	logger.Debug("opened database connection")
 
-	broker, err := queue.NewBroker(settings)
+	rabbit, err := brokers.OpenRabbit(settings)
 	if err != nil {
-		logger.Error("couldn't dial message queue server", "error", err)
+		logger.Error("couldn't dial RabbitMQ server", "error", err)
 		return
 	}
-	logger.Debug("successfully dialed message queue server")
+	logger.Debug("successfully dialed RabbitMQ server")
 
 	defer func() {
 		if err = disconnectDB(); err != nil {
@@ -51,32 +53,32 @@ func main() {
 		}
 		logger.Debug("closed database connection")
 
-		if err = broker.Publisher.Channel.Close(); err != nil {
-			logger.Error("failed to close publisher message queue channel", "error", err)
+		if err = rabbit.Close(); err != nil {
+			logger.Error("failed to close RabbitMQ connection", "error", err)
 			return
 		}
-		logger.Debug("closed publisher message queue channel")
-
-		if err = broker.Consumer.Channel.Close(); err != nil {
-			logger.Error("failed to close consumer message queue channel", "error", err)
-			return
-		}
-		logger.Debug("closed consumer message queue channel")
-
-		if err = broker.Connection.Close(); err != nil {
-			logger.Error("failed to close message queue connection", "error", err)
-			return
-		}
-		logger.Debug("closed message queue connection")
+		logger.Debug("closed RabbitMQ connection")
 	}()
 
+	signals := config.Signals{ShutdownHTTP: make(chan os.Signal), ShutdownGRPC: make(chan os.Signal)}
+
 	app := &config.Application{
-		Broker:     broker,
+		Rabbit:     rabbit,
 		Logger:     logger,
 		Settings:   settings,
 		Repository: repository.NewRepository(db),
+		Signals:    signals,
 	}
 
 	go Grpc.ServeGrpc(app)
-	Http.ServeHttp(app)
+	go Http.ServeHttp(app)
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	interrupt := <-quit
+
+	app.Logger.Info("shutting down server", "signal", interrupt.String())
+	app.Signals.ShutdownHTTP <- interrupt
+	app.Signals.ShutdownGRPC <- interrupt
+	return
 }

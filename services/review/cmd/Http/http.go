@@ -11,6 +11,15 @@ func ServeHttp(app *config.Application) {
 	h := handlers.NewHandler(app)
 	f := h.Router()
 
+	go func() {
+		<-app.Signals.ShutdownHTTP
+		err := f.Shutdown()
+		if err != nil {
+			app.Logger.Error("HTTP graceful shutdown failed")
+			return
+		}
+	}()
+
 	app.Logger.Info(fmt.Sprintf("starting server on port %s", app.Settings.Http.Port))
 	err := f.Listen(fmt.Sprintf(":%v", app.Settings.Http.Port))
 	if err != nil {

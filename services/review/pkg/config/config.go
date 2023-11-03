@@ -2,6 +2,7 @@ package config
 
 import (
 	"log/slog"
+	"os"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 
@@ -13,6 +14,7 @@ type Application struct {
 	Settings   *Settings
 	Logger     *slog.Logger
 	Repository *repository.Repository
+	Signals    Signals
 }
 
 type Settings struct {
@@ -55,4 +57,9 @@ type rabbit struct {
 	AutoDelete bool   `json:"auto_delete"`
 	Exclusive  bool   `json:"exclusive"`
 	NoWait     bool   `json:"no-wait"`
+}
+
+type Signals struct {
+	ShutdownHTTP chan os.Signal
+	ShutdownGRPC chan os.Signal
 }
