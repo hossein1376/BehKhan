@@ -24,3 +24,14 @@ func GetConfigs(path string) (*Settings, error) {
 
 	return settings, nil
 }
+
+func (r *Rabbit) Close() error {
+	if err := r.Channel.Close(); err != nil {
+		return err
+	}
+	if err := r.Connection.Close(); err != nil {
+		return err
+	}
+
+	return nil
+}

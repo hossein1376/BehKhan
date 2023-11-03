@@ -13,24 +13,15 @@
     "host": "localhost",
     "port": "27017"
   },
-  "broker": {
+  "rabbitmq": {
     "username": "root",
     "password": "123456",
     "host": "localhost",
     "port": "5672",
-    "publisher": {
-      "queue_name": "review",
-      "durable": false,
-      "auto_delete": false,
-      "exclusive": false,
-      "no-wait": false
-    },
-    "consumer": {
-      "queue_name": "catalogue",
-      "durable": false,
-      "auto_delete": false,
-      "exclusive": false,
-      "no-wait": false
-    }
+    "queue_name": "review",
+    "durable": false,
+    "auto_delete": false,
+    "exclusive": false,
+    "no-wait": false
   }
 }
