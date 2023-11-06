@@ -15,8 +15,9 @@ func (h *handler) Router() *fiber.App {
 
 	f.Use(recover.New())
 
-	f.Get("/:id", h.getReviewByIDHandler)
-	f.Post("/", h.createNewReviewHandler)
+	reviews := f.Group("/books/:book_id/reviews")
+	reviews.Post("/", h.createNewReviewHandler)
+	reviews.Get("/:review_id", h.getReviewByIDHandler)
 
 	return f
 }

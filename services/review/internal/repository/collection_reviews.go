@@ -31,13 +31,13 @@ func (r *ReviewsCollection) Create(data *dto.CreateReviewRequest) (*dto.CreateRe
 	return &dto.CreateReviewResponse{ID: id.Hex()}, nil
 }
 
-func (r *ReviewsCollection) Get(id string) (*dto.GetReviewByIDResponse, error) {
-	objectId, err := primitive.ObjectIDFromHex(id)
+func (r *ReviewsCollection) Get(BookID int64, ReviewID string) (*dto.GetReviewByIDResponse, error) {
+	objectId, err := primitive.ObjectIDFromHex(ReviewID)
 	if err != nil {
 		return nil, transfer.BadRequestError{Err: err}
 	}
 
-	result := r.db.FindOne(context.Background(), bson.M{"_id": objectId}, nil)
+	result := r.db.FindOne(context.Background(), bson.M{"_id": objectId, "book": BookID}, nil)
 	if result.Err() != nil {
 		switch {
 		case errors.Is(result.Err(), mongo.ErrNoDocuments):

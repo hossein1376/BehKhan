@@ -17,6 +17,6 @@ func NewRepository(db *mongo.Collection) *Repository {
 }
 
 type ReviewRepository interface {
-	Create(*dto.CreateReviewRequest) (*dto.CreateReviewResponse, error)
-	Get(string) (*dto.GetReviewByIDResponse, error)
+	Create(data *dto.CreateReviewRequest) (*dto.CreateReviewResponse, error)
+	Get(bid int64, rid string) (*dto.GetReviewByIDResponse, error)
 }
