@@ -1,4 +1,4 @@
-module github.com/hossein1376/BehKhan/proto/cataloguePB
+module github.com/hossein1376/BehKhan/structure/cataloguePB
 
 go 1.21
 

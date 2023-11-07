@@ -9,13 +9,13 @@ It is built on microservice architecture; and serves as a opportunity to learn a
 ### Catalogue
 
 ```shell
-protoc services/proto/cataloguePB/catalogue.proto --go_out services/proto/
-protoc services/proto/cataloguePB/catalogue.proto --go-grpc_out services/proto/
+protoc services/structure/cataloguePB/catalogue.proto --go_out services/structure/
+protoc services/structure/cataloguePB/catalogue.proto --go-grpc_out services/structure/
 ```
 
 ### Review
 
 ```shell
-protoc services/proto/reviewPB/review.proto --go_out services/proto/ 
-protoc services/proto/reviewPB/review.proto --go-grpc_out services/proto/
+protoc services/structure/reviewPB/review.proto --go_out services/structure/ 
+protoc services/structure/reviewPB/review.proto --go-grpc_out services/structure/
 ```
