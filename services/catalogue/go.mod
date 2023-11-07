@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/hossein1376/BehKhan/proto/cataloguePB v0.0.0-00010101000000-000000000000
+	github.com/hossein1376/BehKhan/structure/cataloguePB v0.0.0-00010101000000-000000000000
 	github.com/spf13/viper v1.17.0
 	google.golang.org/grpc v1.59.0
 	gorm.io/driver/mysql v1.5.2
@@ -58,4 +58,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/hossein1376/BehKhan/proto/cataloguePB => ../proto/cataloguePB
+replace github.com/hossein1376/BehKhan/structure/cataloguePB => ./../structure/cataloguePB

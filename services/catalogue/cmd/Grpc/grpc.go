@@ -8,7 +8,7 @@ import (
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/handlers"
 	"github.com/hossein1376/BehKhan/catalogue/pkg/config"
-	"github.com/hossein1376/BehKhan/proto/cataloguePB"
+	"github.com/hossein1376/BehKhan/structure/cataloguePB"
 )
 
 func ServeGrpc(app *config.Application) {
@@ -18,7 +18,7 @@ func ServeGrpc(app *config.Application) {
 		}
 	}()
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", app.Settings.HTTP.Port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", app.Settings.Grpc.Port))
 	if err != nil {
 		app.Logger.Error("failed to start a grpc listener", "error", err)
 		return

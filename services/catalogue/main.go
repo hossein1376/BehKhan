@@ -25,7 +25,7 @@ func main() {
 	var debug bool
 	var cfg string
 	flag.BoolVar(&debug, "debug", false, "Debug level logs")
-	flag.StringVar(&cfg, "c", "./config/config.yaml", "Config file path")
+	flag.StringVar(&cfg, "c", "./configs/config.yaml", "Config file path")
 	flag.Parse()
 
 	logger := logging.NewLogger(os.Stdout, debug)
