@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/hossein1376/BehKhan/review/internal/dto"
+	"github.com/hossein1376/BehKhan/review/internal/services"
 	"github.com/hossein1376/BehKhan/review/pkg/transfer"
 )
 
@@ -18,11 +19,28 @@ func (h *handler) createNewReviewHandler(c *fiber.Ctx) error {
 		return h.BadRequestResponse(c, err)
 	}
 
+	req.Book, err = strconv.ParseInt(c.Params("book_id"), 10, 64)
+	if err != nil {
+		h.Info(createNewReview, "status", transfer.StatusBadRequest, "error", err)
+		return h.BadRequestResponse(c)
+	}
+
 	response, err := h.Reviews.Create(req)
 	if err != nil {
 		h.Error(createNewReview, "status", transfer.StatusInternalServerError, "error", err)
 		return h.InternalServerErrorResponse(c, err)
 	}
+
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				h.Error(createNewReview, "details", "send message to catalogue panic", "error", err)
+			}
+		}()
+		if err = services.CatalogueReviewsUpdate(h.Rabbit, response.Total, response.Average); err != nil {
+			h.Error(createNewReview, "details", "failed to send message to catalogue", "error", err)
+		}
+	}()
 
 	h.Info(createNewReview, "status", transfer.StatusCreated, "response", response)
 	return h.CreatedResponse(c, response)

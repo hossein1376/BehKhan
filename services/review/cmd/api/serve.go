@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"os"
 	"os/signal"
@@ -16,10 +17,9 @@ import (
 )
 
 func serve() {
-	var cfg string
-	var debug bool
-	flag.BoolVar(&debug, "debug", false, "Debug level logs")
-	flag.StringVar(&cfg, "c", "configs/configs.json", "Config file path")
+	debug, cfg := false, "configs/configs.json"
+	flag.BoolVar(&debug, "debug", debug, "Debug level logs")
+	flag.StringVar(&cfg, "c", cfg, "Config file path")
 	flag.Parse()
 
 	logger := logging.NewLogger(os.Stdout, debug)
@@ -32,43 +32,45 @@ func serve() {
 	}
 	logger.Debug("configs were loaded")
 
-	db, disconnectDB, err := database.OpenDB(settings)
+	client, db, err := database.OpenDB(settings)
 	if err != nil {
 		logger.Error("failed to open database connection", "error", err)
 		return
 	}
 	logger.Debug("opened database connection")
 
-	rabbit, err := brokers.OpenRabbit(settings)
-	if err != nil {
-		logger.Error("couldn't dial RabbitMQ server", "error", err)
-		return
+	app := &config.Application{
+		Logger:     logger,
+		Settings:   settings,
+		Repository: repository.NewRepository(client, db),
 	}
-	logger.Debug("successfully dialed RabbitMQ server")
+
+	go func() {
+		app.Rabbit, err = brokers.OpenRabbit(settings, logger)
+		if err != nil {
+			logger.Error("couldn't dial RabbitMQ server", "error", err)
+			return
+		}
+		logger.Debug("successfully dialed RabbitMQ server")
+	}()
 
 	defer func() {
-		if err = disconnectDB(); err != nil {
+		if err = client.Disconnect(context.Background()); err != nil {
 			logger.Error("failed to close database connection", "error", err)
 			return
 		}
 		logger.Debug("closed database connection")
 
-		if err = rabbit.Close(); err != nil {
-			logger.Error("failed to close RabbitMQ connection", "error", err)
-			return
+		if app.Rabbit != nil {
+			if err = app.Rabbit.Close(); err != nil {
+				logger.Error("failed to close RabbitMQ connection", "error", err)
+				return
+			}
+			logger.Debug("closed RabbitMQ connection")
 		}
-		logger.Debug("closed RabbitMQ connection")
 	}()
 
-	signals := config.Signals{ShutdownHTTP: make(chan os.Signal), ShutdownGRPC: make(chan os.Signal)}
-
-	app := &config.Application{
-		Rabbit:     rabbit,
-		Logger:     logger,
-		Settings:   settings,
-		Repository: repository.NewRepository(db),
-		Signals:    signals,
-	}
+	app.Signals = config.Signals{ShutdownHTTP: make(chan os.Signal), ShutdownGRPC: make(chan os.Signal)}
 
 	go Grpc.ServeGrpc(app)
 	go Http.ServeHttp(app)

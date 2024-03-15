@@ -7,6 +7,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 
 	"github.com/hossein1376/BehKhan/review/internal/repository"
+	"github.com/hossein1376/BehKhan/review/pkg/duration"
 )
 
 type Application struct {
@@ -18,10 +19,11 @@ type Application struct {
 }
 
 type Settings struct {
-	Http   http   `json:"http"`
-	Grpc   grpc   `json:"grpc"`
-	DB     db     `json:"db"`
-	Rabbit rabbit `json:"rabbitmq"`
+	Http     http     `json:"http"`
+	Grpc     grpc     `json:"grpc"`
+	DB       db       `json:"db"`
+	Rabbit   rabbit   `json:"rabbitmq"`
+	Services services `json:"services"`
 }
 
 type Rabbit struct {
@@ -48,10 +50,12 @@ type db struct {
 }
 
 type rabbit struct {
-	Username   string `json:"username"`
-	Password   string `json:"password"`
-	Host       string `json:"host"`
-	Port       string `json:"port"`
+	Username     string            `json:"username"`
+	Password     string            `json:"password"`
+	Host         string            `json:"host"`
+	Port         string            `json:"port"`
+	RetryTimeout duration.Duration `json:"retry_timeout"`
+
 	QueueName  string `json:"queue_name"`
 	Durable    bool   `json:"durable"`
 	AutoDelete bool   `json:"auto_delete"`

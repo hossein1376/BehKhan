@@ -9,6 +9,12 @@ import (
 )
 
 func ServeHttp(app *config.Application) {
+	defer func() {
+		if err := recover(); err != nil {
+			app.Logger.Info("HTTP server panic", "error", err)
+		}
+	}()
+
 	h := handlers.NewHandler(app)
 	f := h.Router()
 

@@ -10,6 +10,8 @@ import (
 
 type handler struct {
 	*slog.Logger
+	*config.Rabbit
+	*config.Settings
 	*transfer.Response
 	*repository.Repository
 }
@@ -17,6 +19,8 @@ type handler struct {
 func NewHandler(app *config.Application) *handler {
 	return &handler{
 		Logger:     app.Logger,
+		Rabbit:     app.Rabbit,
+		Settings:   app.Settings,
 		Repository: app.Repository,
 		Response:   transfer.NewResponse(),
 	}

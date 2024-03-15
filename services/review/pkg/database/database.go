@@ -11,7 +11,7 @@ import (
 	"github.com/hossein1376/BehKhan/review/pkg/config"
 )
 
-func OpenDB(cfg *config.Settings) (*mongo.Collection, func() error, error) {
+func OpenDB(cfg *config.Settings) (*mongo.Client, *mongo.Collection, error) {
 	dsn := fmt.Sprintf(
 		"mongodb://%s:%s@%s:%s",
 		cfg.DB.Username,
@@ -35,13 +35,5 @@ func OpenDB(cfg *config.Settings) (*mongo.Collection, func() error, error) {
 		return nil, nil, err
 	}
 
-	// Disconnect function
-	disconnect := func() error {
-		if err = client.Disconnect(context.Background()); err != nil {
-			return err
-		}
-		return nil
-	}
-
-	return client.Database(cfg.DB.Name).Collection(cfg.DB.Collection), disconnect, nil
+	return client, client.Database(cfg.DB.Name).Collection(cfg.DB.Collection), nil
 }
