@@ -17,7 +17,7 @@ type db struct {
 }
 
 type rest struct {
-	Port string `yaml:"port"`
+	Addr string `yaml:"addr"`
 }
 
 type Config struct {
@@ -38,15 +38,11 @@ func (c Config) Validate() error {
 	if c.DB.Username == "" {
 		return fmt.Errorf("empty db username")
 	}
-	if c.Rest.Port == "" {
-		return fmt.Errorf("empty rest port")
+	if c.Rest.Addr == "" {
+		return fmt.Errorf("empty Rest address")
 	}
-
 	if _, err := strconv.Atoi(c.DB.Port); err != nil {
 		return fmt.Errorf("invalid db port: %s", c.DB.Port)
-	}
-	if _, err := strconv.Atoi(c.Rest.Port); err != nil {
-		return fmt.Errorf("invalid rest port: %s", c.Rest.Port)
 	}
 
 	return nil

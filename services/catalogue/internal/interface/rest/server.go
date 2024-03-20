@@ -1,6 +1,9 @@
 package rest
 
-func Start(port string) error {
+import (
+	"net/http"
+)
 
-	return nil
+func Start(addr string) error {
+	return http.ListenAndServe(addr, nil)
 }
