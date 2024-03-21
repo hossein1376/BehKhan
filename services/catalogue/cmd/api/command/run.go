@@ -31,7 +31,7 @@ func Run() error {
 	// ...
 	_ = ctrl
 
-	err = rest.Start(c.Rest.Addr)
+	err = rest.NewServer(c.Rest.Addr).Start()
 	if err != nil {
 		return fmt.Errorf("start rest server: %w", err)
 	}
