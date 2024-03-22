@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/application/controller"
+	"github.com/hossein1376/BehKhan/catalogue/internal/application/service"
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria/pool"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/config"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/rest"
@@ -25,11 +25,11 @@ func Run() error {
 	if err != nil {
 		return fmt.Errorf("open database connection: %w", err)
 	}
-	ctrl := controller.New(db)
+	srvc := service.New(db)
 
 	// mount routes
 	// ...
-	_ = ctrl
+	_ = srvc
 
 	err = rest.NewServer(c.Rest.Addr).Start()
 	if err != nil {

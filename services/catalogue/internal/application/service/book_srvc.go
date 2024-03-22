@@ -1,4 +1,4 @@
-package controller
+package service
 
 import (
 	"context"
@@ -9,15 +9,15 @@ import (
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria/pool"
 )
 
-type BookCtrl struct {
+type BookSrvc struct {
 	db *pool.DB
 }
 
-func newBookCtrl(db *pool.DB) BookCtrl {
-	return BookCtrl{db: db}
+func newBookSrvc(db *pool.DB) BookSrvc {
+	return BookSrvc{db: db}
 }
 
-func (c BookCtrl) Create(ctx context.Context, request *dto.CreateBookRequest) error {
+func (c BookSrvc) Create(ctx context.Context, request *dto.CreateBookRequest) error {
 	book := mapper.CreateBookRequestToEntity(request)
 	err := c.db.Query(ctx, func(ctx context.Context, p *pool.Pool) error {
 		return p.Books.Create(ctx, book)
@@ -25,6 +25,6 @@ func (c BookCtrl) Create(ctx context.Context, request *dto.CreateBookRequest) er
 	return err
 }
 
-func (c BookCtrl) GetByID(ctx context.Context, request *dto.GetBookByIDRequest) (entities.Book, error) {
+func (c BookSrvc) GetByID(ctx context.Context, request *dto.GetBookByIDRequest) (entities.Book, error) {
 	panic("implement me")
 }
