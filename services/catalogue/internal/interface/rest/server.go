@@ -1,23 +1,25 @@
 package rest
 
 import (
-	"net/http"
+	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	srv     *http.Server
-	handler http.Handler
+	engine *gin.Engine
+	addr   string
 }
 
 func NewServer(addr string) *Server {
-	srv := &http.Server{
-		Addr: addr,
-	}
+	gin.SetMode(gin.ReleaseMode)
+	engine := gin.New()
+	engine.Use(gin.Recovery())
+
 	return &Server{
-		srv: srv,
+		engine: engine,
+		addr:   addr,
 	}
 }
 
 func (s *Server) Start() error {
-	return s.srv.ListenAndServe()
+	return s.engine.Run()
 }
