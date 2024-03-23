@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/application/mapper"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/dto"
@@ -20,11 +21,24 @@ func newBookSrvc(db *pool.DB) BookSrvc {
 func (c BookSrvc) Create(ctx context.Context, request *dto.CreateBookRequest) error {
 	book := mapper.CreateBookRequestToEntity(request)
 	err := c.db.Query(ctx, func(ctx context.Context, p *pool.Pool) error {
-		return p.Books.Create(ctx, book)
+		err := p.Books.Create(ctx, book)
+		if err != nil {
+			return fmt.Errorf("repository Books.Create(): %w", err)
+		}
+		return nil
 	})
 	return err
 }
 
-func (c BookSrvc) GetByID(ctx context.Context, request *dto.GetBookByIDRequest) (entities.Book, error) {
-	panic("implement me")
+func (c BookSrvc) GetByID(ctx context.Context, request *dto.GetBookByIDRequest) (*entities.Book, error) {
+	var book *entities.Book
+	err := c.db.Query(ctx, func(ctx context.Context, p *pool.Pool) error {
+		var err error
+		book, err = p.Books.GetByID(ctx, request.ID)
+		if err != nil {
+			return fmt.Errorf("repository Books.GetByID(%d): %w", request.ID, err)
+		}
+		return nil
+	})
+	return book, err
 }

@@ -9,5 +9,5 @@ import (
 
 type BookService interface {
 	Create(ctx context.Context, request *dto.CreateBookRequest) error
-	GetByID(ctx context.Context, request *dto.GetBookByIDRequest) (entities.Book, error)
+	GetByID(ctx context.Context, request *dto.GetBookByIDRequest) (*entities.Book, error)
 }

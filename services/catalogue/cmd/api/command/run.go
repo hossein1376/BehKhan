@@ -25,13 +25,12 @@ func Run() error {
 	if err != nil {
 		return fmt.Errorf("open database connection: %w", err)
 	}
-	srvc := service.New(db)
+	services := service.New(db)
 
-	// mount routes
-	// ...
-	_ = srvc
+	srv := rest.NewServer()
+	srv.Mount(services)
 
-	err = rest.NewServer(c.Rest.Addr).Start()
+	err = srv.Start(c.Rest.Addr)
 	if err != nil {
 		return fmt.Errorf("start rest server: %w", err)
 	}
