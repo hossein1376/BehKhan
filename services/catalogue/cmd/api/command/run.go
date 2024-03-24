@@ -3,6 +3,9 @@ package command
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/application/service"
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria/pool"
@@ -25,15 +28,26 @@ func Run() error {
 	if err != nil {
 		return fmt.Errorf("open database connection: %w", err)
 	}
-	services := service.New(db)
 
+	services := service.New(db)
 	srv := rest.NewServer()
+	defer srv.Stop()
 	srv.Mount(services)
 
-	err = srv.Start(c.Rest.Addr)
-	if err != nil {
-		return fmt.Errorf("start rest server: %w", err)
-	}
+	// graceful stop
+	startErr := make(chan error)
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	return nil
+	go func() {
+		err = srv.Start(c.Rest.Addr)
+		startErr <- fmt.Errorf("HTTP server startup: %w", err)
+	}()
+
+	select {
+	case err = <-startErr:
+		return err
+	case <-quit:
+		return nil
+	}
 }
