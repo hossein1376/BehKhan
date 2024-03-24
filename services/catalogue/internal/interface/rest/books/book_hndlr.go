@@ -1,6 +1,7 @@
 package books
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,11 +12,13 @@ import (
 
 type BookRestHndlr struct {
 	Services service.Service
+	Logger   *slog.Logger
 }
 
-func NewBookRestHndlr(g *gin.RouterGroup, srvc service.Service) BookRestHndlr {
+func NewBookRestHndlr(g *gin.RouterGroup, srvc service.Service, logger *slog.Logger) BookRestHndlr {
 	bookHandlers := BookRestHndlr{
 		Services: srvc,
+		Logger:   logger,
 	}
 	g.Handle(http.MethodPost, "", bookHandlers.CreateNewBookHandler)
 	g.Handle(http.MethodGet, ":id", bookHandlers.GetBookByIDHandler)

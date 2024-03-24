@@ -2,6 +2,7 @@ package rest
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -42,6 +43,6 @@ func (s *Server) Stop() error {
 	return s.srv.Shutdown(ctx)
 }
 
-func (s *Server) Mount(srvc service.Service) {
-	books.NewBookRestHndlr(s.engine.Group("books"), srvc)
+func (s *Server) Mount(srvc service.Service, logger *slog.Logger) {
+	books.NewBookRestHndlr(s.engine.Group("books"), srvc, logger)
 }
