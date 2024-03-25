@@ -6,5 +6,5 @@ type CreateBookRequest struct {
 }
 
 type GetBookByIDRequest struct {
-	ID int
+	ID int64
 }
