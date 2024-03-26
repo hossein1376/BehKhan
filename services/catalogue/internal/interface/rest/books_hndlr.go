@@ -1,4 +1,4 @@
-package books
+package rest
 
 import (
 	"log/slog"
