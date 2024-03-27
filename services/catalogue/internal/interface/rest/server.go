@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/application/service"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
 )
 
 type Server struct {
@@ -42,6 +42,6 @@ func (s *Server) Stop() error {
 	return s.srv.Shutdown(ctx)
 }
 
-func (s *Server) Mount(srvc service.Service, logger *slog.Logger) {
+func (s *Server) Mount(srvc services.Service, logger *slog.Logger) {
 	NewBooksHndlr(s.engine.Group("books"), srvc, logger)
 }
