@@ -6,3 +6,5 @@ db:
   password: 123456
 rest:
   addr: 0.0.0.0:8002
+grpc:
+  addr: 0.0.0.0:8003
