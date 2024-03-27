@@ -6,17 +6,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/application/service"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/dto"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
 )
 
-type BookRestHndlr struct {
-	Services service.Service
+type BooksHndlr struct {
+	Services services.Service
 	Logger   *slog.Logger
 }
 
-func NewBookRestHndlr(g *gin.RouterGroup, srvc service.Service, logger *slog.Logger) BookRestHndlr {
-	bookHandlers := BookRestHndlr{
+func NewBooksHndlr(g *gin.RouterGroup, srvc services.Service, logger *slog.Logger) BooksHndlr {
+	bookHandlers := BooksHndlr{
 		Services: srvc,
 		Logger:   logger,
 	}
@@ -26,11 +26,11 @@ func NewBookRestHndlr(g *gin.RouterGroup, srvc service.Service, logger *slog.Log
 	return bookHandlers
 }
 
-func (h BookRestHndlr) CreateNewBookHandler(c *gin.Context) {
+func (h BooksHndlr) CreateNewBookHandler(c *gin.Context) {
 
 }
 
-func (h BookRestHndlr) GetBookByIDHandler(c *gin.Context) {
+func (h BooksHndlr) GetBookByIDHandler(c *gin.Context) {
 	req := &dto.GetBookByIDRequest{}
 	if err := c.Bind(req); err != nil {
 		c.JSON(http.StatusBadRequest, err)
