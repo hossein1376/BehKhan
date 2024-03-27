@@ -35,13 +35,16 @@ func Run() error {
 	logger.Debug("open database connection pool")
 
 	services := service.New(db)
-	srv := rest.NewServer()
+
+	httpSrv := rest.NewServer()
 	defer func() {
-		err := srv.Stop()
+		logger.Debug("gracefully stopping HTTP server")
+		err := httpSrv.Stop()
 		if err != nil {
 			logger.Error("failed to gracefully stop HTTP server", "error", err)
 		}
 	}()
+	httpSrv.Mount(services, logger)
 
 	srv.Mount(services, logger)
 
@@ -50,16 +53,24 @@ func Run() error {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
+	// start HTTP server
 	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				logger.Error("panic in HTTP server goroutine", "msg", err)
+			}
+		}()
 		logger.Info("starting HTTP server", "address", c.Rest.Addr)
-		err = srv.Start(c.Rest.Addr)
+		err = httpSrv.Start(c.Rest.Addr)
 		startErr <- fmt.Errorf("HTTP server startup: %w", err)
 	}()
 
 	select {
 	case err = <-startErr:
+		logger.Error("failed to start server", "error", err)
 		return err
 	case <-quit:
+		logger.Debug("received signal to stop server")
 		return nil
 	}
 }
