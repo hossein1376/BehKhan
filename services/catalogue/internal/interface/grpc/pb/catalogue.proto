@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package catalogue;
+option go_package = "./cataloguePB";
+
+message Book {
+  int64 id = 1;
+  string name = 2;
+}
+
+message BookRequest {
+  int64 id = 1;
+}
+
+message BookResponse {
+  Book books = 1;
+}
+
+service BookService {
+  rpc GetBook(BookRequest) returns (BookResponse) {};
+}
