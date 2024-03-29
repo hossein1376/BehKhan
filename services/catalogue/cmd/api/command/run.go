@@ -11,6 +11,7 @@ import (
 	"github.com/hossein1376/BehKhan/catalogue/internal/application/service"
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria/pool"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/config"
+	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/rest"
 )
 
@@ -46,7 +47,12 @@ func Run() error {
 	}()
 	httpSrv.Mount(services, logger)
 
-	srv.Mount(services, logger)
+	grpcSrv := grpc.NewServer()
+	defer func() {
+		logger.Debug("gracefully stopping gRPC server")
+		_ = grpcSrv.Stop()
+	}()
+	grpcSrv.Mount(services, logger)
 
 	// graceful stop
 	startErr := make(chan error)
@@ -63,6 +69,18 @@ func Run() error {
 		logger.Info("starting HTTP server", "address", c.Rest.Addr)
 		err = httpSrv.Start(c.Rest.Addr)
 		startErr <- fmt.Errorf("HTTP server startup: %w", err)
+	}()
+
+	// start gRPC server
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				logger.Error("panic in gRPC server goroutine", "msg", err)
+			}
+		}()
+		logger.Info("starting gRPC server", "address", c.Grpc.Addr)
+		err = grpcSrv.Start(c.Grpc.Addr)
+		startErr <- fmt.Errorf("gRPC server startup: %w", err)
 	}()
 
 	select {
