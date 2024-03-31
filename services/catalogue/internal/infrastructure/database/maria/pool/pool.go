@@ -7,12 +7,11 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database"
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria"
 )
 
 type Pool struct {
-	*database.Tables
+	*maria.Tables
 	*sql.Tx
 }
 
