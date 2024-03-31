@@ -33,6 +33,11 @@ func Run() error {
 	if err != nil {
 		return fmt.Errorf("open database connection: %w", err)
 	}
+	defer func() {
+		if err := db.GetDB().Close(); err != nil {
+			logger.Error("closing database connection", "error", err)
+		}
+	}()
 	logger.Debug("open database connection pool")
 
 	services := service.New(db)
@@ -88,7 +93,7 @@ func Run() error {
 		logger.Error("failed to start server", "error", err)
 		return err
 	case <-quit:
-		logger.Debug("received signal to stop server")
+		logger.Info("received signal to stop server")
 		return nil
 	}
 }

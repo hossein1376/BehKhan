@@ -56,9 +56,9 @@ func (p *DB) Query(ctx context.Context, f Query) error {
 	err = f(ctx, r)
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
-			return fmt.Errorf("rollback error: %w %w", rollbackErr, err)
+			return fmt.Errorf("rollback: %w query: %w", rollbackErr, err)
 		}
-		return err
+		return fmt.Errorf("query: %w", err)
 	}
 	return nil
 }
