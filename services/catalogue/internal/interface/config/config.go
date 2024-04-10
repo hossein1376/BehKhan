@@ -9,6 +9,7 @@ type Config struct {
 	DB     db     `yaml:"db"`
 	Rest   rest   `yaml:"rest"`
 	Grpc   grpc   `yaml:"grpc"`
+	Logger logger `yaml:"logger"`
 }
 
 type db struct {
@@ -28,6 +29,9 @@ type grpc struct {
 	Addr string `yaml:"addr"`
 }
 
+type logger struct {
+	Level string `yaml:"level"`
+}
 
 func (c Config) Validate() error {
 	if c.DB.Name == "" {
