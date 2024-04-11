@@ -8,3 +8,5 @@ rest:
   addr: 0.0.0.0:8002
 grpc:
   addr: 0.0.0.0:8003
+logger:
+  level: debug # debug, info, warn or error
