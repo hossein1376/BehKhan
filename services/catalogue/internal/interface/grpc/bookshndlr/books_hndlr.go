@@ -1,4 +1,4 @@
-package grpc
+package bookshndlr
 
 import (
 	"context"
@@ -18,7 +18,7 @@ type BooksHndlr struct {
 	cataloguePB.UnimplementedBookServiceServer
 }
 
-func NewBooksHndlr(srv *grpc.Server, srvc services.Service, logger *slog.Logger) BooksHndlr {
+func New(srv *grpc.Server, srvc services.Service, logger *slog.Logger) BooksHndlr {
 	bookHandlers := BooksHndlr{
 		Services: srvc,
 		Logger:   logger,

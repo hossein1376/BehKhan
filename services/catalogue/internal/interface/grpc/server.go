@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
+	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc/bookshndlr"
 )
 
 type Server struct {
@@ -35,5 +36,5 @@ func (s *Server) Stop() error {
 }
 
 func (s *Server) Mount(srvc services.Service, logger *slog.Logger) {
-	NewBooksHndlr(s.srv, srvc, logger)
+	bookshndlr.New(s.srv, srvc, logger)
 }

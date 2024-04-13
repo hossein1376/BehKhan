@@ -1,4 +1,4 @@
-package rest
+package bookshndlr
 
 import (
 	"log/slog"
@@ -15,7 +15,7 @@ type BooksHndlr struct {
 	Logger   *slog.Logger
 }
 
-func NewBooksHndlr(g *gin.RouterGroup, srvc services.Service, logger *slog.Logger) BooksHndlr {
+func New(g *gin.RouterGroup, srvc services.Service, logger *slog.Logger) BooksHndlr {
 	bookHandlers := BooksHndlr{
 		Services: srvc,
 		Logger:   logger,
