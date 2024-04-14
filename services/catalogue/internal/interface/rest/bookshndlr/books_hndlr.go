@@ -8,6 +8,7 @@ import (
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/dto"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
+	"github.com/hossein1376/BehKhan/catalogue/internal/interface/rest/serde"
 )
 
 type BooksHndlr struct {
@@ -33,13 +34,13 @@ func (h BooksHndlr) CreateNewBookHandler(c *gin.Context) {
 func (h BooksHndlr) GetBookByIDHandler(c *gin.Context) {
 	req := &dto.GetBookByIDRequest{}
 	if err := c.Bind(req); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{"message": err})
 		return
 	}
 
 	resp, err := h.Services.BookSrvc.GetByID(c.Request.Context(), req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, nil)
+		c.JSON(serde.StatusCode(err))
 		return
 	}
 
