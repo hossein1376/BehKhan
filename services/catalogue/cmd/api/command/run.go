@@ -55,7 +55,7 @@ func Run() error {
 	grpcSrv := grpc.NewServer()
 	defer func() {
 		logger.Debug("gracefully stopping gRPC server")
-		_ = grpcSrv.Stop()
+		grpcSrv.Stop()
 	}()
 	grpcSrv.Mount(services, logger)
 

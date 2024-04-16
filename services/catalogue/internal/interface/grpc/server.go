@@ -30,9 +30,8 @@ func (s *Server) Start(addr string) error {
 	return s.srv.Serve(lis)
 }
 
-func (s *Server) Stop() error {
+func (s *Server) Stop() {
 	s.srv.GracefulStop()
-	return nil
 }
 
 func (s *Server) Mount(srvc services.Service, logger *slog.Logger) {
