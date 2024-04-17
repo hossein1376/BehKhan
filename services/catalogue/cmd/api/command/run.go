@@ -13,6 +13,7 @@ import (
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/config"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/rest"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/slogger"
 )
 
 func Run() error {
@@ -25,7 +26,7 @@ func Run() error {
 		return fmt.Errorf("load configs: %w", err)
 	}
 
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	logger := slogger.NewJsonLogger(c.Logger.Level)
 	logger.Debug("initialized logger")
 
 	dsn := fmt.Sprintf("%s:%s@/%s", c.DB.Username, c.DB.Password, c.DB.Name)
