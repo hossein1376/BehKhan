@@ -48,7 +48,7 @@ func Run() error {
 		logger.Debug("gracefully stopping HTTP server")
 		err := httpSrv.Stop()
 		if err != nil {
-			logger.Error("failed to gracefully stop HTTP server", "error", err)
+			logger.Error("failed to gracefully stop HTTP server", slog.Any("error", err))
 		}
 	}()
 	httpSrv.Mount(services, logger)
@@ -69,10 +69,10 @@ func Run() error {
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				logger.Error("panic in HTTP server goroutine", "msg", err)
+				logger.Error("panic in HTTP server goroutine", slog.Any("msg", err))
 			}
 		}()
-		logger.Info("starting HTTP server", "address", c.Rest.Addr)
+		logger.Info("starting HTTP server", slog.String("address", c.Rest.Addr))
 		err = httpSrv.Start(c.Rest.Addr)
 		startErr <- fmt.Errorf("HTTP server startup: %w", err)
 	}()
@@ -81,17 +81,17 @@ func Run() error {
 	go func() {
 		defer func() {
 			if err := recover(); err != nil {
-				logger.Error("panic in gRPC server goroutine", "msg", err)
+				logger.Error("panic in gRPC server goroutine", slog.Any("msg", err))
 			}
 		}()
-		logger.Info("starting gRPC server", "address", c.Grpc.Addr)
+		logger.Info("starting gRPC server", slog.String("address", c.Grpc.Addr))
 		err = grpcSrv.Start(c.Grpc.Addr)
 		startErr <- fmt.Errorf("gRPC server startup: %w", err)
 	}()
 
 	select {
 	case err = <-startErr:
-		logger.Error("failed to start server", "error", err)
+		logger.Error("failed to start server", slog.Any("error", err))
 		return err
 	case <-quit:
 		logger.Info("received signal to stop server")
