@@ -1,23 +1,30 @@
+// Package errs exposes Error object which implements error interface.
+// It exports functions covering different scenarios, with the possibility of adding a second argument to provide a
+// message to the clients.
 package errs
 
 import (
+	"fmt"
 	"net/http"
 
 	"google.golang.org/grpc/codes"
 )
 
-// Error is a basic err object used for communicating context between layers.
-// It contains an Err, an optional Message to return to the clients, alongside HTTP and GRPC status codes.
+// Error is an object used for communicating error's context between layers.
+// It contains an error, a Message to return to the clients, alongside HTTP and gRPC status codes.
 type Error struct {
 	Err            error
 	Message        string
 	HttpStatusCode int
-	GrpcStatusCOde codes.Code
+	GrpcStatusCode codes.Code
 }
 
-// Error returns the underlying Err text.
+// Error returns error's text, prefixed by its HTTP and gRPC status codes.
+// Example:
+//
+//	[400][3] Bad Input
 func (e Error) Error() string {
-	return e.Err.Error()
+	return fmt.Sprintf("[%d][%d] %s", e.HttpStatusCode, e.GrpcStatusCode, e.Err.Error())
 }
 
 // Unwrap returns the underlying Err.
@@ -44,7 +51,7 @@ func BadRequest(err error, msg ...string) Error {
 		Err:            err,
 		Message:        getMsg(msg),
 		HttpStatusCode: http.StatusBadRequest,
-		GrpcStatusCOde: codes.InvalidArgument,
+		GrpcStatusCode: codes.InvalidArgument,
 	}
 }
 
@@ -57,7 +64,7 @@ func Unauthorized(err error, msg ...string) Error {
 		Err:            err,
 		Message:        getMsg(msg),
 		HttpStatusCode: http.StatusUnauthorized,
-		GrpcStatusCOde: codes.Unauthenticated,
+		GrpcStatusCode: codes.Unauthenticated,
 	}
 }
 
@@ -70,7 +77,7 @@ func Forbidden(err error, msg ...string) Error {
 		Err:            err,
 		Message:        getMsg(msg),
 		HttpStatusCode: http.StatusForbidden,
-		GrpcStatusCOde: codes.PermissionDenied,
+		GrpcStatusCode: codes.PermissionDenied,
 	}
 }
 
@@ -83,7 +90,7 @@ func NotFound(err error, msg ...string) Error {
 		Err:            err,
 		Message:        getMsg(msg),
 		HttpStatusCode: http.StatusFound,
-		GrpcStatusCOde: codes.NotFound,
+		GrpcStatusCode: codes.NotFound,
 	}
 }
 
@@ -96,7 +103,7 @@ func Exists(err error, msg ...string) Error {
 		Err:            err,
 		Message:        getMsg(msg),
 		HttpStatusCode: http.StatusConflict,
-		GrpcStatusCOde: codes.AlreadyExists,
+		GrpcStatusCode: codes.AlreadyExists,
 	}
 }
 
@@ -109,7 +116,7 @@ func Conflict(err error, msg ...string) Error {
 		Err:            err,
 		Message:        getMsg(msg),
 		HttpStatusCode: http.StatusConflict,
-		GrpcStatusCOde: codes.FailedPrecondition,
+		GrpcStatusCode: codes.FailedPrecondition,
 	}
 }
 
@@ -122,7 +129,7 @@ func TooMany(err error, msg ...string) Error {
 		Err:            err,
 		Message:        getMsg(msg),
 		HttpStatusCode: http.StatusTooManyRequests,
-		GrpcStatusCOde: codes.ResourceExhausted,
+		GrpcStatusCode: codes.ResourceExhausted,
 	}
 }
 
@@ -135,7 +142,7 @@ func Internal(err error, msg ...string) Error {
 		Err:            err,
 		Message:        getMsg(msg),
 		HttpStatusCode: http.StatusInternalServerError,
-		GrpcStatusCOde: codes.Internal,
+		GrpcStatusCode: codes.Internal,
 	}
 }
 
@@ -148,6 +155,6 @@ func Timeout(err error, msg ...string) Error {
 		Err:            err,
 		Message:        getMsg(msg),
 		HttpStatusCode: http.StatusGatewayTimeout,
-		GrpcStatusCOde: codes.DeadlineExceeded,
+		GrpcStatusCode: codes.DeadlineExceeded,
 	}
 }
