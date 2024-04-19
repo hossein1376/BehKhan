@@ -9,6 +9,7 @@ import (
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/dto"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc/pb/cataloguePB"
+	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc/serde"
 )
 
 type BooksHndlr struct {
@@ -35,7 +36,7 @@ func (h BooksHndlr) GetBook(ctx context.Context, request *cataloguePB.BookReques
 	}
 	book, err := h.Services.BookSrvc.GetByID(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, serde.Code(err)
 	}
 
 	return &cataloguePB.BookResponse{
