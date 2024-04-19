@@ -36,7 +36,7 @@ func Run() error {
 	}
 	defer func() {
 		if err := db.GetDB().Close(); err != nil {
-			logger.Error("closing database connection", "error", err)
+			logger.Error("closing database connection", slog.Any("error", err))
 		}
 	}()
 	logger.Debug("open database connection pool")
@@ -73,7 +73,7 @@ func Run() error {
 			}
 		}()
 		logger.Info("starting HTTP server", slog.String("address", c.Rest.Addr))
-		err = httpSrv.Start(c.Rest.Addr)
+		err := httpSrv.Start(c.Rest.Addr)
 		startErr <- fmt.Errorf("HTTP server startup: %w", err)
 	}()
 
@@ -85,12 +85,12 @@ func Run() error {
 			}
 		}()
 		logger.Info("starting gRPC server", slog.String("address", c.Grpc.Addr))
-		err = grpcSrv.Start(c.Grpc.Addr)
+		err := grpcSrv.Start(c.Grpc.Addr)
 		startErr <- fmt.Errorf("gRPC server startup: %w", err)
 	}()
 
 	select {
-	case err = <-startErr:
+	case err := <-startErr:
 		logger.Error("failed to start server", slog.Any("error", err))
 		return err
 	case <-quit:
