@@ -40,7 +40,7 @@ func (h BooksHndlr) GetBookByIDHandler(c *gin.Context) {
 
 	resp, err := h.Services.BookSrvc.GetByID(c.Request.Context(), req)
 	if err != nil {
-		c.JSON(serde.StatusCode(err))
+		c.JSON(serde.Status(err))
 		return
 	}
 
