@@ -21,15 +21,15 @@ func Run() error {
 	flag.StringVar(&configPath, "cfg", "assets/config/sample.yaml", "Configuration File")
 	flag.Parse()
 
-	c, err := config.Load(configPath)
+	cfg, err := config.Load(configPath)
 	if err != nil {
 		return fmt.Errorf("load configs: %w", err)
 	}
 
-	logger := slogger.NewJsonLogger(c.Logger.Level)
+	logger := slogger.NewJsonLogger(cfg.Logger.Level)
 	logger.Debug("initialized logger")
 
-	dsn := fmt.Sprintf("%s:%s@/%s", c.DB.Username, c.DB.Password, c.DB.Name)
+	dsn := fmt.Sprintf("%s:%s@/%s", cfg.DB.Username, cfg.DB.Password, cfg.DB.Name)
 	db, err := pool.New(dsn)
 	if err != nil {
 		return fmt.Errorf("open database connection: %w", err)
@@ -72,8 +72,8 @@ func Run() error {
 				logger.Error("panic in HTTP server goroutine", slog.Any("msg", err))
 			}
 		}()
-		logger.Info("starting HTTP server", slog.String("address", c.Rest.Addr))
-		err := httpSrv.Start(c.Rest.Addr)
+		logger.Info("starting HTTP server", slog.String("address", cfg.Rest.Addr))
+		err := httpSrv.Start(cfg.Rest.Addr)
 		startErr <- fmt.Errorf("HTTP server startup: %w", err)
 	}()
 
@@ -84,8 +84,8 @@ func Run() error {
 				logger.Error("panic in gRPC server goroutine", slog.Any("msg", err))
 			}
 		}()
-		logger.Info("starting gRPC server", slog.String("address", c.Grpc.Addr))
-		err := grpcSrv.Start(c.Grpc.Addr)
+		logger.Info("starting gRPC server", slog.String("address", cfg.GRPC.Addr))
+		err := grpcSrv.Start()
 		startErr <- fmt.Errorf("gRPC server startup: %w", err)
 	}()
 
