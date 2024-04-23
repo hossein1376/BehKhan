@@ -1,3 +1,4 @@
+// Package config is home to the application's configuration.
 package config
 
 import (
@@ -5,14 +6,16 @@ import (
 	"strconv"
 )
 
+// Config stores configurations of the application. It is created on startup from the configuration file, and is meant
+// to remain read-only.
 type Config struct {
-	DB     db     `yaml:"db"`
-	Rest   rest   `yaml:"rest"`
-	Grpc   grpc   `yaml:"grpc"`
-	Logger logger `yaml:"logger"`
+	DB     DB     `yaml:"db"`
+	Rest   Rest   `yaml:"rest"`
+	GRPC   GRPC   `yaml:"grpc"`
+	Logger Logger `yaml:"logger"`
 }
 
-type db struct {
+type DB struct {
 	Name     string `yaml:"name"`
 	Host     string `yaml:"host"`
 	Port     string `yaml:"port"`
@@ -21,18 +24,19 @@ type db struct {
 	Insecure bool   `yaml:"insecure,omitempty"`
 }
 
-type rest struct {
+type Rest struct {
 	Addr string `yaml:"addr"`
 }
 
-type grpc struct {
-	Addr string `yaml:"addr"`
+type GRPC struct {
+	Addr      string `yaml:"addr"`
 }
 
-type logger struct {
+type Logger struct {
 	Level string `yaml:"level"`
 }
 
+// Validate checks for the integrity of the provided configs.
 func (c Config) Validate() error {
 	if c.DB.Name == "" {
 		return fmt.Errorf("empty db name")
@@ -49,7 +53,7 @@ func (c Config) Validate() error {
 	if c.Rest.Addr == "" {
 		return fmt.Errorf("empty Rest address")
 	}
-	if c.Grpc.Addr == "" {
+	if c.GRPC.Addr == "" {
 		return fmt.Errorf("empty gRPC address")
 	}
 	if _, err := strconv.Atoi(c.DB.Port); err != nil {
