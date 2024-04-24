@@ -25,11 +25,15 @@ type DB struct {
 }
 
 type Rest struct {
-	Addr string `yaml:"addr"`
+	Addr      string `yaml:"addr"`
+	Logger    bool   `yaml:"logger"`
+	RequestID bool   `yaml:"request_id"`
 }
 
 type GRPC struct {
 	Addr      string `yaml:"addr"`
+	Logger    bool   `yaml:"logger"`
+	RequestID bool   `yaml:"request_id"`
 }
 
 type Logger struct {
