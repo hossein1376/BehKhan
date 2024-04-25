@@ -6,7 +6,11 @@ db:
   password: 123456
 rest:
   addr: 0.0.0.0:8002
+  logger: True
+  request_id: True
 grpc:
   addr: 0.0.0.0:8003
+  logger: True
+  request_id: True
 logger:
   level: debug # debug, info, warn or error
