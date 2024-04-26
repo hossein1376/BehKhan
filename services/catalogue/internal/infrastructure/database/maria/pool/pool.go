@@ -63,7 +63,7 @@ func (p *DB) Query(ctx context.Context, f Query) error {
 	return nil
 }
 
-// GetDB returns the underlying *sql.DB struct.
-func (p *DB) GetDB() *sql.DB {
+// DB returns the underlying *sql.DB struct.
+func (p *DB) DB() *sql.DB {
 	return p.db
 }
