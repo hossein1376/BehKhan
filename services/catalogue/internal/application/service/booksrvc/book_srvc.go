@@ -1,11 +1,9 @@
-package service
+package booksrvc
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/application/mapper"
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/dto"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entities"
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria/pool"
 )
@@ -14,7 +12,7 @@ type BookSrvc struct {
 	db *pool.DB
 }
 
-func newBookSrvc(db *pool.DB) BookSrvc {
+func NewBookSrvc(db *pool.DB) BookSrvc {
 	return BookSrvc{db: db}
 }
 
