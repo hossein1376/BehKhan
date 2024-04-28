@@ -1,6 +1,12 @@
 package entities
 
 type Book struct {
-	ID   int64
-	Name string
+	ID    BookID
+	Title string
+}
+
+type BookID int64
+
+func (id BookID) ToInt64() int64 {
+	return int64(id)
 }

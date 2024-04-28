@@ -8,5 +8,5 @@ import (
 
 type BookRepository interface {
 	Create(ctx context.Context, book entities.Book) error
-	GetByID(ctx context.Context, id int64) (*entities.Book, error)
+	GetByID(ctx context.Context, id entities.BookID) (*entities.Book, error)
 }
