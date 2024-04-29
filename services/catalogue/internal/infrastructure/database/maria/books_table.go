@@ -19,6 +19,6 @@ func (b BooksTable) Create(ctx context.Context, book entities.Book) error {
 	panic("implement me")
 }
 
-func (b BooksTable) GetByID(ctx context.Context, id int64) (*entities.Book, error) {
+func (b BooksTable) GetByID(ctx context.Context, id entities.BookID) (*entities.Book, error) {
 	panic("implement me")
 }

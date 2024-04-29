@@ -5,8 +5,10 @@ import (
 	"log/slog"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/dto"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entities"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc/pb/cataloguePB"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc/serde"
@@ -31,18 +33,20 @@ func New(srv *grpc.Server, srvc services.Service, logger *slog.Logger) BooksHndl
 }
 
 func (h BooksHndlr) GetBook(ctx context.Context, request *cataloguePB.BookRequest) (*cataloguePB.BookResponse, error) {
-	req := &dto.GetBookByIDRequest{
-		ID: request.GetId(),
+	id := request.GetId()
+	if id <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "id must be positive")
 	}
-	book, err := h.Services.BookSrvc.GetByID(ctx, req)
+
+	book, err := h.Services.BookSrvc.GetByID(ctx, entities.BookID(id))
 	if err != nil {
 		return nil, serde.Code(err)
 	}
 
 	return &cataloguePB.BookResponse{
 		Books: &cataloguePB.Book{
-			Id:   book.ID,
-			Name: book.Name,
+			Id:   book.ID.ToInt64(),
+			Name: book.Title,
 		},
 	}, nil
 }

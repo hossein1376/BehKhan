@@ -16,10 +16,9 @@ func NewBookSrvc(db *pool.DB) BookSrvc {
 	return BookSrvc{db: db}
 }
 
-func (c BookSrvc) Create(ctx context.Context, request *dto.CreateBookRequest) error {
-	book := mapper.CreateBookRequestToEntity(request)
+func (c BookSrvc) Create(ctx context.Context, title string) error {
 	err := c.db.Query(ctx, func(ctx context.Context, p *pool.Pool) error {
-		err := p.Books.Create(ctx, book)
+		err := p.Books.Create(ctx, entities.Book{})
 		if err != nil {
 			return fmt.Errorf("repository Books.Create(): %w", err)
 		}
@@ -28,13 +27,13 @@ func (c BookSrvc) Create(ctx context.Context, request *dto.CreateBookRequest) er
 	return err
 }
 
-func (c BookSrvc) GetByID(ctx context.Context, request *dto.GetBookByIDRequest) (*entities.Book, error) {
+func (c BookSrvc) GetByID(ctx context.Context, id entities.BookID) (*entities.Book, error) {
 	var book *entities.Book
 	err := c.db.Query(ctx, func(ctx context.Context, p *pool.Pool) error {
 		var err error
-		book, err = p.Books.GetByID(ctx, request.ID)
+		book, err = p.Books.GetByID(ctx, id)
 		if err != nil {
-			return fmt.Errorf("repository Books.GetByID(%d): %w", request.ID, err)
+			return fmt.Errorf("repository Books.GetByID(%d): %w", id, err)
 		}
 		return nil
 	})

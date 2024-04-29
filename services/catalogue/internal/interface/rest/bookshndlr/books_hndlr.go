@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/dto"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/rest/serde"
 )
@@ -28,17 +27,25 @@ func New(g *gin.RouterGroup, srvc services.Service, logger *slog.Logger) BooksHn
 }
 
 func (h BooksHndlr) CreateNewBookHandler(c *gin.Context) {
-
-}
-
-func (h BooksHndlr) GetBookByIDHandler(c *gin.Context) {
-	req := &dto.GetBookByIDRequest{}
-	if err := c.Bind(req); err != nil {
+	req, err := bindCreateNewBook(c)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err})
 		return
 	}
 
-	resp, err := h.Services.BookSrvc.GetByID(c.Request.Context(), req)
+	err = h.Services.BookSrvc.Create(c.Request.Context(), req.Title)
+	c.JSON(serde.Status(err))
+	return
+}
+
+func (h BooksHndlr) GetBookByIDHandler(c *gin.Context) {
+	req, err := bindGetBookByID(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+		return
+	}
+
+	resp, err := h.Services.BookSrvc.GetByID(c.Request.Context(), req.ID)
 	if err != nil {
 		c.JSON(serde.Status(err))
 		return
