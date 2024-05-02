@@ -53,12 +53,11 @@ func Run() error {
 	}()
 	httpSrv.Mount(services, logger)
 
-	grpcSrv := grpc.NewServer()
+	grpcSrv := grpc.NewServer(services, logger, cfg.GRPC)
 	defer func() {
 		logger.Debug("gracefully stopping gRPC server")
 		grpcSrv.Stop()
 	}()
-	grpcSrv.Mount(services, logger)
 
 	// graceful stop
 	startErr := make(chan error)
@@ -79,11 +78,6 @@ func Run() error {
 
 	// start gRPC server
 	go func() {
-		defer func() {
-			if err := recover(); err != nil {
-				logger.Error("panic in gRPC server goroutine", slog.Any("msg", err))
-			}
-		}()
 		logger.Info("starting gRPC server", slog.String("address", cfg.GRPC.Addr))
 		err := grpcSrv.Start()
 		startErr <- fmt.Errorf("gRPC server startup: %w", err)
