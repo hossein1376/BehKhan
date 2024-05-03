@@ -15,9 +15,8 @@ import (
 )
 
 type Server struct {
-	srv    *grpc.Server
-	logger *slog.Logger
-	addr   string
+	srv  *grpc.Server
+	addr string
 }
 
 func NewServer(srvc services.Service, logger *slog.Logger, cfg config.GRPC) *Server {
@@ -52,9 +51,8 @@ func NewServer(srvc services.Service, logger *slog.Logger, cfg config.GRPC) *Ser
 	bookshndlr.New(srv, srvc, logger)
 
 	return &Server{
-		logger: logger,
-		srv:    srv,
-		addr:   cfg.Addr,
+		srv:  srv,
+		addr: cfg.Addr,
 	}
 }
 

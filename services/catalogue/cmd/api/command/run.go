@@ -66,7 +66,7 @@ func Run() error {
 	// start HTTP server
 	go func() {
 		logger.Info("starting HTTP server", slog.String("address", cfg.Rest.Addr))
-		err := httpSrv.Start(cfg.Rest.Addr)
+		err := httpSrv.Start()
 		startErr <- fmt.Errorf("HTTP server startup: %w", err)
 	}()
 

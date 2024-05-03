@@ -14,13 +14,11 @@ import (
 )
 
 type Server struct {
-	engine *gin.Engine
-	srv    *http.Server
-	logger *slog.Logger
+	srv *http.Server
 }
 
 func NewServer(srvc services.Service, logger *slog.Logger, cfg config.Rest) *Server {
-	// create new Engine instance
+	// create a new Engine instance
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.New()
 
@@ -45,20 +43,18 @@ func NewServer(srvc services.Service, logger *slog.Logger, cfg config.Rest) *Ser
 	engine.Use(middleware...)
 	srv := &http.Server{
 		Handler: engine,
+		Addr:    cfg.Addr,
 	}
 
 	// mounting routes
 	bookshndlr.New(engine.Group("books"), srvc, logger)
 
 	return &Server{
-		engine: engine,
-		srv:    srv,
-		logger: logger,
+		srv: srv,
 	}
 }
 
-func (s *Server) Start(addr string) error {
-	s.srv.Addr = addr
+func (s *Server) Start() error {
 	return s.srv.ListenAndServe()
 }
 
