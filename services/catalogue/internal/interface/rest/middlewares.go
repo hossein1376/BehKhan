@@ -7,8 +7,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/hossein1376/BehKhan/catalogue/pkg/reqID"
 	"github.com/hossein1376/BehKhan/catalogue/pkg/slogger"
-	"github.com/oklog/ulid/v2"
 )
 
 type middlewares struct {
@@ -21,16 +22,19 @@ func newMiddlewares(logger *slog.Logger) *middlewares {
 
 func (m *middlewares) requestIDMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, err := ulid.New(ulid.Now(), ulid.DefaultEntropy())
+		id, err := reqID.NewRequestID()
 		if err != nil {
-			m.logger.ErrorContext(c.Request.Context(), "error generating ulid", slog.Any("err", err))
+			m.logger.ErrorContext(c.Request.Context(), "error generating request id", slog.Any("error", err))
 			return
 		}
-		reqID := id.String()
 
-		ctx := context.WithValue(c.Request.Context(), "request_id", reqID)
-		ctx = slogger.WithAttrs(ctx, slog.String("request_id", reqID))
+		// put request id inside context
+		ctx := context.WithValue(c.Request.Context(), reqID.RequestIDKey, id)
 
+		// include request_id in logs
+		ctx = slogger.WithAttrs(ctx, slog.String("request_id", id))
+
+		// replace the context with the new one
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
@@ -40,10 +44,10 @@ func (m *middlewares) recoverMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if msg := recover(); msg != nil {
-				m.logger.ErrorContext(c.Request.Context(), "panic in HTTP server", slog.Any("msg", msg))
+				m.logger.ErrorContext(c.Request.Context(), "panic in HTTP server", slog.Any("error", msg))
+				c.AbortWithStatusJSON(http.StatusInternalServerError,
+					gin.H{"message": http.StatusText(http.StatusInternalServerError)})
 			}
-			c.AbortWithStatusJSON(http.StatusInternalServerError,
-				gin.H{"message": http.StatusText(http.StatusInternalServerError)})
 		}()
 		c.Next()
 	}

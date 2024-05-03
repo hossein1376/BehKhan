@@ -7,15 +7,13 @@ import (
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
-	"github.com/oklog/ulid/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/hossein1376/BehKhan/catalogue/pkg/reqID"
 	"github.com/hossein1376/BehKhan/catalogue/pkg/slogger"
 )
-
-const RequestID = "request_id"
 
 type interceptors struct {
 	logger *slog.Logger
@@ -43,34 +41,38 @@ func (i interceptors) loggerHandler() logging.Logger {
 func (i interceptors) unaryRequestID(
 	ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler,
 ) (any, error) {
-	id, err := ulid.New(ulid.Now(), ulid.DefaultEntropy())
+	id, err := reqID.NewRequestID()
 	if err != nil {
-		i.logger.ErrorContext(ctx, "error generating ulid", slog.Any("err", err))
+		i.logger.ErrorContext(ctx, "error generating request id", slog.Any("error", err))
 		return handler(ctx, req)
 	}
-	reqID := id.String()
-	ctx = context.WithValue(ctx, RequestID, reqID)
-	return handler(slogger.WithAttrs(ctx, slog.String("request_id", reqID)), req)
+
+	// put request id inside context
+	ctx = context.WithValue(ctx, reqID.RequestIDKey, id)
+
+	// include request_id in logs
+	ctx = slogger.WithAttrs(ctx, slog.String("request_id", id))
+
+	return handler(ctx, req)
 }
 
 func (i interceptors) streamRequestID(
 	srv any, stream grpc.ServerStream, _ *grpc.StreamServerInfo, handler grpc.StreamHandler,
 ) error {
-	id, err := ulid.New(ulid.Now(), ulid.DefaultEntropy())
+	id, err := reqID.NewRequestID()
 	if err != nil {
-		i.logger.ErrorContext(stream.Context(), "error generating ulid", slog.Any("err", err))
+		i.logger.ErrorContext(stream.Context(), "error generating request id", slog.Any("error", err))
 		return handler(srv, stream)
 	}
-	reqID := id.String()
 
-	// put request_id inside context
-	ctx := context.WithValue(stream.Context(), RequestID, reqID)
+	// put request id inside context
+	ctx := context.WithValue(stream.Context(), reqID.RequestIDKey, id)
 
 	// include request_id in logs
-	newCtx := slogger.WithAttrs(ctx, slog.String("request_id", reqID))
+	ctx = slogger.WithAttrs(ctx, slog.String("request_id", id))
 
 	// wrap new context with the gRPC stream's context
 	wrappedStream := grpcMiddleware.WrapServerStream(stream)
-	wrappedStream.WrappedContext = newCtx
+	wrappedStream.WrappedContext = ctx
 	return handler(srv, wrappedStream)
 }
