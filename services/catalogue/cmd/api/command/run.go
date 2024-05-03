@@ -43,7 +43,7 @@ func Run() error {
 
 	services := service.New(db)
 
-	httpSrv := rest.NewServer()
+	httpSrv := rest.NewServer(services, logger, cfg.Rest)
 	defer func() {
 		logger.Debug("gracefully stopping HTTP server")
 		err := httpSrv.Stop()
@@ -51,7 +51,6 @@ func Run() error {
 			logger.Error("failed to gracefully stop HTTP server", slog.Any("error", err))
 		}
 	}()
-	httpSrv.Mount(services, logger)
 
 	grpcSrv := grpc.NewServer(services, logger, cfg.GRPC)
 	defer func() {
@@ -66,11 +65,6 @@ func Run() error {
 
 	// start HTTP server
 	go func() {
-		defer func() {
-			if err := recover(); err != nil {
-				logger.Error("panic in HTTP server goroutine", slog.Any("msg", err))
-			}
-		}()
 		logger.Info("starting HTTP server", slog.String("address", cfg.Rest.Addr))
 		err := httpSrv.Start(cfg.Rest.Addr)
 		startErr <- fmt.Errorf("HTTP server startup: %w", err)
