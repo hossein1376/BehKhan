@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hossein1376/BehKhan/catalogue/internal/application/mapper"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entities"
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria/pool"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/errs"
 )
 
 type BookSrvc struct {
@@ -17,8 +19,13 @@ func NewBookSrvc(db *pool.DB) BookSrvc {
 }
 
 func (c BookSrvc) Create(ctx context.Context, title string) error {
-	err := c.db.Query(ctx, func(ctx context.Context, p *pool.Pool) error {
-		err := p.Books.Create(ctx, entities.Book{})
+	book, err := mapper.ToCreateNewBook(title)
+	if err != nil {
+		return errs.BadRequest(err, err.Error())
+	}
+
+	err = c.db.Query(ctx, func(ctx context.Context, p *pool.Pool) error {
+		err := p.Books.Create(ctx, book)
 		if err != nil {
 			return fmt.Errorf("repository Books.Create(): %w", err)
 		}
