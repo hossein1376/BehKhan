@@ -29,7 +29,7 @@ func New(g *gin.RouterGroup, srvc services.Service, logger *slog.Logger) BooksHn
 func (h BooksHndlr) CreateNewBookHandler(c *gin.Context) {
 	req, err := bindCreateNewBook(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -41,7 +41,7 @@ func (h BooksHndlr) CreateNewBookHandler(c *gin.Context) {
 func (h BooksHndlr) GetBookByIDHandler(c *gin.Context) {
 	req, err := bindGetBookByID(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
