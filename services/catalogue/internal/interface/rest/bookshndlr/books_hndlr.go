@@ -34,7 +34,12 @@ func (h BooksHndlr) CreateNewBookHandler(c *gin.Context) {
 	}
 
 	err = h.Services.BookSrvc.Create(c.Request.Context(), req.Title)
-	c.JSON(serde.Status(err))
+	if err != nil {
+		h.Logger.DebugContext(c.Request.Context(), "CreateNewBook", "error", err)
+		c.JSON(serde.Status(err))
+	}
+
+	c.JSON(http.StatusNoContent, nil)
 	return
 }
 
@@ -47,6 +52,7 @@ func (h BooksHndlr) GetBookByIDHandler(c *gin.Context) {
 
 	resp, err := h.Services.BookSrvc.GetByID(c.Request.Context(), req.ID)
 	if err != nil {
+		h.Logger.DebugContext(c.Request.Context(), "GetBookByID", "error", err)
 		c.JSON(serde.Status(err))
 		return
 	}
