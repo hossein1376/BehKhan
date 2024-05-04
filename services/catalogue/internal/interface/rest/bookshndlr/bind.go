@@ -35,5 +35,10 @@ func bindCreateNewBook(c *gin.Context) (*createNewBookRequest, error) {
 	if err := c.BindJSON(&req); err != nil {
 		return nil, fmt.Errorf("biding request: %w", err)
 	}
+
+	if req.Title == "" {
+		return nil, fmt.Errorf("title must be provided")
+	}
+
 	return req, nil
 }
