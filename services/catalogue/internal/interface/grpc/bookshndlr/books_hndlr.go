@@ -9,19 +9,19 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entities"
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/service"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc/pb/cataloguePB"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc/serde"
 )
 
 type BooksHndlr struct {
-	Services services.Service
+	Services service.Service
 	Logger   *slog.Logger
 
 	cataloguePB.UnimplementedBookServiceServer
 }
 
-func New(srv *grpc.Server, srvc services.Service, logger *slog.Logger) BooksHndlr {
+func New(srv *grpc.Server, srvc service.Service, logger *slog.Logger) BooksHndlr {
 	bookHandlers := BooksHndlr{
 		Services: srvc,
 		Logger:   logger,

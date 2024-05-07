@@ -9,7 +9,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"google.golang.org/grpc"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/service"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/config"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc/bookshndlr"
 )
@@ -19,7 +19,7 @@ type Server struct {
 	addr string
 }
 
-func NewServer(srvc services.Service, logger *slog.Logger, cfg config.GRPC) *Server {
+func NewServer(srvc service.Service, logger *slog.Logger, cfg config.GRPC) *Server {
 	// first, manage gRPC interceptors
 	var unary []grpc.UnaryServerInterceptor
 	var stream []grpc.StreamServerInterceptor

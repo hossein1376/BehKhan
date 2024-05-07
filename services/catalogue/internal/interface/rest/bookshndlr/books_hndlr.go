@@ -6,16 +6,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/service"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/rest/serde"
 )
 
 type BooksHndlr struct {
-	Services services.Service
+	Services service.Service
 	Logger   *slog.Logger
 }
 
-func New(g *gin.RouterGroup, srvc services.Service, logger *slog.Logger) BooksHndlr {
+func New(g *gin.RouterGroup, srvc service.Service, logger *slog.Logger) BooksHndlr {
 	bookHandlers := BooksHndlr{
 		Services: srvc,
 		Logger:   logger,

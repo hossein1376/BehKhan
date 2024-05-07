@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/services"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/service"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/config"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/rest/bookshndlr"
 )
@@ -17,7 +17,7 @@ type Server struct {
 	srv *http.Server
 }
 
-func NewServer(srvc services.Service, logger *slog.Logger, cfg config.Rest) *Server {
+func NewServer(srvc service.Service, logger *slog.Logger, cfg config.Rest) *Server {
 	// create a new Engine instance
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.New()

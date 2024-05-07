@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/application/service"
+	"github.com/hossein1376/BehKhan/catalogue/internal/application/services"
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria/pool"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/config"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc"
@@ -41,9 +41,9 @@ func Run() error {
 	}()
 	logger.Debug("open database connection pool")
 
-	services := service.New(db)
+	srvc := services.New(db)
 
-	httpSrv := rest.NewServer(services, logger, cfg.Rest)
+	httpSrv := rest.NewServer(srvc, logger, cfg.Rest)
 	defer func() {
 		logger.Debug("gracefully stopping HTTP server")
 		err := httpSrv.Stop()
@@ -52,7 +52,7 @@ func Run() error {
 		}
 	}()
 
-	grpcSrv := grpc.NewServer(services, logger, cfg.GRPC)
+	grpcSrv := grpc.NewServer(srvc, logger, cfg.GRPC)
 	defer func() {
 		logger.Debug("gracefully stopping gRPC server")
 		grpcSrv.Stop()

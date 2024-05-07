@@ -1,4 +1,4 @@
-package services
+package service
 
 type Service struct {
 	BookSrvc BookService
