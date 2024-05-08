@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/application/mapper"
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entities"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entity"
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria/pool"
 	"github.com/hossein1376/BehKhan/catalogue/pkg/errs"
 )
@@ -34,9 +34,9 @@ func (c BookSrvc) Create(ctx context.Context, title string) error {
 	return err
 }
 
-func (c BookSrvc) GetByID(ctx context.Context, id entities.BookID) (*entities.Book, error) {
-	var book *entities.Book
 	err := c.db.Query(ctx, func(ctx context.Context, p *pool.Pool) error {
+func (c BookSrvc) GetByID(ctx context.Context, id entity.BookID) (*entity.Book, error) {
+	var book *entity.Book
 		var err error
 		book, err = p.Books.GetByID(ctx, id)
 		if err != nil {

@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entities"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entity"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/service"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc/pb/cataloguePB"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc/serde"
@@ -38,7 +38,7 @@ func (h BooksHndlr) GetBook(ctx context.Context, request *cataloguePB.BookReques
 		return nil, status.Error(codes.InvalidArgument, "id must be positive")
 	}
 
-	book, err := h.Services.BookSrvc.GetByID(ctx, entities.BookID(id))
+	book, err := h.Services.BookSrvc.GetByID(ctx, entity.BookID(id))
 	if err != nil {
 		return nil, serde.Code(err)
 	}

@@ -5,11 +5,11 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entities"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entity"
 )
 
 type getBookByIDRequest struct {
-	ID entities.BookID
+	ID entity.BookID
 }
 
 type createNewBookRequest struct {
@@ -27,7 +27,7 @@ func bindGetBookByID(c *gin.Context) (*getBookByIDRequest, error) {
 		return nil, fmt.Errorf("id parameter must be a valid, positive number")
 	}
 
-	return &getBookByIDRequest{ID: entities.BookID(id)}, nil
+	return &getBookByIDRequest{ID: entity.BookID(id)}, nil
 }
 
 func bindCreateNewBook(c *gin.Context) (*createNewBookRequest, error) {

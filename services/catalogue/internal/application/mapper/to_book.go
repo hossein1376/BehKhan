@@ -1,11 +1,11 @@
 package mapper
 
 import (
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entities"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entity"
 )
 
-func ToCreateNewBook(title string) (entities.Book, error) {
-	return entities.Book{
+func ToCreateNewBook(title string) (entity.Book, error) {
+	return entity.Book{
 		Title: title,
 	}, nil
 }
