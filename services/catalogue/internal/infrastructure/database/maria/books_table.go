@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entities"
+	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entity"
 )
 
 type BooksTable struct {
@@ -15,10 +15,10 @@ func newBooksTable(tx *sql.Tx) BooksTable {
 	return BooksTable{tx: tx}
 }
 
-func (b BooksTable) Create(ctx context.Context, book entities.Book) error {
+func (b BooksTable) Create(ctx context.Context, book entity.Book) error {
 	panic("implement me")
 }
 
-func (b BooksTable) GetByID(ctx context.Context, id entities.BookID) (*entities.Book, error) {
+func (b BooksTable) GetByID(ctx context.Context, id entity.BookID) (*entity.Book, error) {
 	panic("implement me")
 }
