@@ -35,7 +35,7 @@ func Run() error {
 		return fmt.Errorf("open database connection: %w", err)
 	}
 	defer func() {
-		if err := db.DB().Close(); err != nil {
+		if err := db.Close(); err != nil {
 			logger.Error("closing database connection", slog.Any("error", err))
 		}
 	}()
