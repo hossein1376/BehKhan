@@ -23,6 +23,6 @@ type Tables struct {
 }
 
 type Repo struct {
-	*Tables
+	Tables
 	Querier Querier
 }
