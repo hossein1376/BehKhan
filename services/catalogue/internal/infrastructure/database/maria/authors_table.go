@@ -1,13 +1,13 @@
 package maria
 
 import (
-	"database/sql"
+	"gorm.io/gorm"
 )
 
 type AuthorsTable struct {
-	tx *sql.Tx
+	db *gorm.DB
 }
 
-func newAuthorsTable(tx *sql.Tx) AuthorsTable {
-	return AuthorsTable{tx: tx}
+func newAuthorsTable(db *gorm.DB) AuthorsTable {
+	return AuthorsTable{db: db}
 }

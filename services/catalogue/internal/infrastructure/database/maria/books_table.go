@@ -2,17 +2,18 @@ package maria
 
 import (
 	"context"
-	"database/sql"
+
+	"gorm.io/gorm"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entity"
 )
 
 type BooksTable struct {
-	tx *sql.Tx
+	db *gorm.DB
 }
 
-func newBooksTable(tx *sql.Tx) BooksTable {
-	return BooksTable{tx: tx}
+func newBooksTable(db *gorm.DB) BooksTable {
+	return BooksTable{db: db}
 }
 
 func (b BooksTable) Create(ctx context.Context, book entity.Book) error {

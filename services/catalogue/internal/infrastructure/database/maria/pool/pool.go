@@ -6,6 +6,9 @@ import (
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/repository"
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria"
@@ -39,9 +42,18 @@ func (p *Pool) Query(ctx context.Context, f repository.QueryFunc) error {
 		return fmt.Errorf("starting transaction: %w", err)
 	}
 
+	g, err := gorm.Open(mysql.New(mysql.Config{
+		Conn: tx,
+	}), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
+	if err != nil {
+		return fmt.Errorf("opening gorm connection: %w", err)
+	}
+
 	r := &repository.Repo{
 		Querier: tx,
-		Tables:  maria.New(tx),
+		Tables:  maria.New(g),
 	}
 	err = f(r)
 	if err != nil {
