@@ -24,5 +24,5 @@ type Tables struct {
 
 type Repo struct {
 	Tables
-	Querier Querier
+	Querier
 }
