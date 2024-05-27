@@ -9,10 +9,11 @@ import (
 // Config stores configurations of the application. It is created on startup from the configuration file, and is meant
 // to remain read-only.
 type Config struct {
-	DB     DB     `yaml:"db"`
-	Rest   Rest   `yaml:"rest"`
-	GRPC   GRPC   `yaml:"grpc"`
-	Logger Logger `yaml:"logger"`
+	DB        DB     `yaml:"db"`
+	Migration string `yaml:"migration"`
+	Rest      Rest   `yaml:"rest"`
+	GRPC      GRPC   `yaml:"grpc"`
+	Logger    Logger `yaml:"logger"`
 }
 
 type DB struct {
@@ -53,6 +54,9 @@ func (c Config) Validate() error {
 	}
 	if c.DB.Username == "" {
 		return fmt.Errorf("empty db username")
+	}
+	if c.Migration == "" {
+		return fmt.Errorf("empty migration path")
 	}
 	if c.Rest.Addr == "" {
 		return fmt.Errorf("empty Rest address")
