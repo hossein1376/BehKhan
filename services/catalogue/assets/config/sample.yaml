@@ -4,6 +4,7 @@ db:
   port: 3306
   username: root
   password: 123456
+migration: ./migrations
 rest:
   addr: 0.0.0.0:8002
   logger: True
