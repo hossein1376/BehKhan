@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/application/services"
+	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria/migration"
 	"github.com/hossein1376/BehKhan/catalogue/internal/infrastructure/database/maria/pool"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/config"
 	"github.com/hossein1376/BehKhan/catalogue/internal/interface/grpc"
@@ -40,6 +41,11 @@ func Run() error {
 		}
 	}()
 	logger.Debug("open database connection pool")
+
+	// run DB migrations
+	if err := migration.Migrate(db, cfg.Migration); err != nil {
+		return fmt.Errorf("migrate database: %w", err)
+	}
 
 	srvc := services.New(db)
 
@@ -79,7 +85,6 @@ func Run() error {
 
 	select {
 	case err := <-startErr:
-		logger.Error("failed to start server", slog.Any("error", err))
 		return err
 	case <-quit:
 		logger.Info("received signal to stop server")
