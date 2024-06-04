@@ -20,14 +20,14 @@ func TestBookSrvc_GetByID(t *testing.T) {
 	}{
 		{
 			name:    "Get Book",
-			db:      mocks.Pool{},
+			db:      mocks.MockPool{},
 			id:      entity.BookID(1),
 			want:    &entity.Book{ID: entity.BookID(1), Title: "1"},
 			wantErr: false,
 		},
 		{
 			name:    "Book Not Found",
-			db:      mocks.Pool{},
+			db:      mocks.MockPool{},
 			id:      entity.BookID(0),
 			want:    nil,
 			wantErr: true,

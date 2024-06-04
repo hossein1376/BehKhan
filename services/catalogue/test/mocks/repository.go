@@ -11,12 +11,12 @@ import (
 	"github.com/hossein1376/BehKhan/catalogue/pkg/errs"
 )
 
-type Pool struct{}
+type MockPool struct{}
 
-func (Pool) Query(_ context.Context, f repository.QueryFunc) error {
+func (MockPool) Query(_ context.Context, f repository.QueryFunc) error {
 	repo := &repository.Repo{
 		Tables: repository.Tables{
-			Books:   BookRepository{},
+			Books:   MockBookRepository{},
 			Authors: AuthorRepository{},
 		},
 		Querier: Querier{},
@@ -24,7 +24,7 @@ func (Pool) Query(_ context.Context, f repository.QueryFunc) error {
 	return f(repo)
 }
 
-func (Pool) Close() error {
+func (MockPool) Close() error {
 	return nil
 }
 
@@ -38,13 +38,13 @@ func (Querier) QueryContext(_ context.Context, _ string, _ ...any) (*sql.Rows, e
 	return nil, nil
 }
 
-type BookRepository struct{}
+type MockBookRepository struct{}
 
-func (BookRepository) Create(context.Context, entity.Book) error {
+func (MockBookRepository) Create(context.Context, string) error {
 	return nil
 }
 
-func (BookRepository) GetByID(_ context.Context, id entity.BookID) (*entity.Book, error) {
+func (MockBookRepository) GetByID(_ context.Context, id entity.BookID) (*entity.Book, error) {
 	if id < 1 {
 		return nil, errs.NotFound(fmt.Errorf("not found"))
 	}
