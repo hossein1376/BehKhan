@@ -1,7 +1,6 @@
 package entity
 
 type Author struct {
-	ID    int
-	Name  string
-	Books []Book
+	ID   int
+	Name string
 }
