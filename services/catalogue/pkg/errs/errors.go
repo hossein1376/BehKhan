@@ -23,8 +23,13 @@ type Error struct {
 // Example:
 //
 //	[400][3] Bad Input
+//
+// If no error is present, it defaults to HTTP status text.
 func (e Error) Error() string {
-	return fmt.Sprintf("[%d][%d] %s", e.HttpStatusCode, e.GrpcStatusCode, e.Err.Error())
+	if e.Err == nil {
+		return http.StatusText(e.HttpStatusCode)
+	}
+	return fmt.Sprintf("[%d][%d] %s", e.HttpStatusCode, e.GrpcStatusCode, e.Err)
 }
 
 // Unwrap returns the underlying Err.
@@ -89,7 +94,7 @@ func NotFound(err error, msg ...string) Error {
 	return Error{
 		Err:            err,
 		Message:        getMsg(msg),
-		HttpStatusCode: http.StatusFound,
+		HttpStatusCode: http.StatusNotFound,
 		GrpcStatusCode: codes.NotFound,
 	}
 }
