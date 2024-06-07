@@ -19,7 +19,7 @@ func Status(err error) (int, gin.H) {
 	if err == nil {
 		return http.StatusNoContent, nil
 	}
-	var e *errs.Error
+	var e errs.Error
 	if errors.As(err, &e) {
 		msg := e.Message
 		if msg == "" {

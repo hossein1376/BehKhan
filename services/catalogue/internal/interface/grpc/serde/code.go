@@ -18,7 +18,7 @@ func Code(err error) error {
 	if err == nil {
 		return nil
 	}
-	var e *errs.Error
+	var e errs.Error
 	if errors.As(err, &e) {
 		msg := e.Message
 		if msg == "" {
