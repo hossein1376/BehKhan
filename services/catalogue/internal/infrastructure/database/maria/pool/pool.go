@@ -39,7 +39,7 @@ func New(dsn string) (*Pool, error) {
 func (p *Pool) Query(ctx context.Context, f repository.QueryFunc) error {
 	tx, err := p.db.BeginTx(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("starting transaction: %w", err)
+		return fmt.Errorf("start transaction: %w", err)
 	}
 
 	g, err := gorm.Open(mysql.New(mysql.Config{
@@ -48,7 +48,7 @@ func (p *Pool) Query(ctx context.Context, f repository.QueryFunc) error {
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
-		return fmt.Errorf("opening gorm connection: %w", err)
+		return fmt.Errorf("open gorm connection: %w", err)
 	}
 
 	r := &repository.Repo{
@@ -61,6 +61,11 @@ func (p *Pool) Query(ctx context.Context, f repository.QueryFunc) error {
 			return fmt.Errorf("rollback: %w query: %w", rollbackErr, err)
 		}
 		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("commit: %w", err)
 	}
 	return nil
 }
