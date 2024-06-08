@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entity"
+	"github.com/hossein1376/BehKhan/catalogue/pkg/errs"
 )
 
 type BooksTable struct {
@@ -17,9 +18,29 @@ func newBooksTable(db *gorm.DB) BooksTable {
 }
 
 func (b BooksTable) Create(ctx context.Context, title string) error {
-	panic("implement me")
+	type books struct {
+		Title string `gorm:"title"`
+	}
+	book := books{
+		Title: title,
+	}
+
+	r := b.db.Table("books").WithContext(ctx).Create(&book)
+	return r.Error
 }
 
 func (b BooksTable) GetByID(ctx context.Context, id entity.BookID) (*entity.Book, error) {
-	panic("implement me")
+	type book struct {
+		ID    int64  `gorm:"id"`
+		Title string `gorm:"title"`
+	}
+	var q book
+	switch r := b.db.WithContext(ctx).Table("books").Find(&q, id); {
+	case r.RowsAffected == 0:
+		return nil, errs.NotFound(nil)
+	case r.Error != nil:
+		return nil, r.Error
+	}
+
+	return &entity.Book{ID: entity.BookID(q.ID), Title: q.Title}, nil
 }
