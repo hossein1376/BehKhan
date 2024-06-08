@@ -7,6 +7,6 @@ import (
 )
 
 type BookRepository interface {
-	Create(ctx context.Context, book entity.Book) error
+	Create(ctx context.Context, title string) error
 	GetByID(ctx context.Context, id entity.BookID) (*entity.Book, error)
 }

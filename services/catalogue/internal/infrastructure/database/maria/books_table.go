@@ -16,7 +16,7 @@ func newBooksTable(db *gorm.DB) BooksTable {
 	return BooksTable{db: db}
 }
 
-func (b BooksTable) Create(ctx context.Context, book entity.Book) error {
+func (b BooksTable) Create(ctx context.Context, title string) error {
 	panic("implement me")
 }
 

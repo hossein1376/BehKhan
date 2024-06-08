@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hossein1376/BehKhan/catalogue/internal/application/mapper"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/entity"
 	"github.com/hossein1376/BehKhan/catalogue/internal/domain/repository"
-	"github.com/hossein1376/BehKhan/catalogue/pkg/errs"
 )
 
 type BookSrvc struct {
@@ -19,13 +17,8 @@ func NewBookSrvc(db repository.Pool) BookSrvc {
 }
 
 func (c BookSrvc) Create(ctx context.Context, title string) error {
-	book, err := mapper.ToCreateNewBook(title)
-	if err != nil {
-		return errs.BadRequest(err, err.Error())
-	}
-
-	err = c.db.Query(ctx, func(r *repository.Repo) error {
-		err := r.Books.Create(ctx, book)
+	err := c.db.Query(ctx, func(r *repository.Repo) error {
+		err := r.Books.Create(ctx, title)
 		if err != nil {
 			return fmt.Errorf("repository Books.Create(): %w", err)
 		}
